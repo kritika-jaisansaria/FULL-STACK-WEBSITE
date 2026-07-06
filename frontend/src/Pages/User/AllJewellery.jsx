@@ -38,9 +38,10 @@ const routeFilter =
   useEffect(() => {
   const params = new URLSearchParams();
 
-  // Category
-  if (category) {
-    params.append("category", category.toLowerCase());
+   if (routeFilter) {
+    params.set(routeFilter.type, routeFilter.value);
+  } else if (category) {
+    params.set("category", category.toLowerCase());
   }
 
   // Style
@@ -95,9 +96,9 @@ useEffect(() => {
   const filters = [];
 
   // Category
-  if (routeFilter) {
+ if (routeFilter) {
     filters.push({
-      type: "category",
+      type: routeFilter.type,
       value: routeFilter.value,
     });
   }

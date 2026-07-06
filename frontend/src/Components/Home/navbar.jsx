@@ -5,7 +5,7 @@ import {
 } from 'react-icons/fa';
 import { Link, useLocation } from 'react-router-dom';
 import jewelleryImage from '../../assets/images/dropdown1.webp';
-
+import { CATEGORY_SLUG_MAP } from "../../utils/categoryRoutes";
 const navItems = [
   { icon: <FaGem />, label: 'All Jewellery', path: '/all-jewellery', dropdown: true },
   { icon: <FaCrown />, label: 'Gold', path: '/gold', dropdown: true },
@@ -18,12 +18,22 @@ const navItems = [
   { icon: <FaPhone />, label: 'Contact', path: '/contact', dropdown: false }
 ];
 
+const getCategoryPath = (categoryValue) => {
+  const entry = Object.entries(CATEGORY_SLUG_MAP).find(
+    ([, value]) =>
+      value.type === "category" && value.value === categoryValue
+  );
+
+  return entry ? `/${entry[0]}` : "/all-jewellery";
+};
+
 const Navbar = () => {
   const location = useLocation();
   const [hoveredIndex, setHoveredIndex] = useState(null);
   
   const buildFilterLink = (filters) => {
-  const params = new URLSearchParams(location.search);
+    const isSamePage = basePath === location.pathname;
+ const params = new URLSearchParams(isSamePage ? location.search : "");
 
   Object.entries(filters).forEach(([key, value]) => {
     if (value === null || value === undefined || value === "") {
@@ -33,7 +43,7 @@ const Navbar = () => {
     }
   });
 
-  return `${location.pathname}?${params.toString()}`;
+   return `${basePath}?${params.toString()}`;
 };
 
   return (
@@ -313,26 +323,55 @@ if (label === 'Rings') {
 
       <div className="dropdown-column" style={{ flex: '0.7' }}>
         <h4>By Price</h4>
-        <Link className="dropdown-item" to="/under-10k">Under 10k</Link>
-        <Link className="dropdown-item" to="/10k-20k">10k–20k</Link>
-        <Link className="dropdown-item" to="/20k-30k">20k–30k</Link>
-        <Link className="dropdown-item" to="/30k-40k">30k–40k</Link>
-        <Link className="dropdown-item" to="/40k-50k">40k–50k</Link>
-        <Link className="dropdown-item" to="/50k-60k">50k–60k</Link>
+        <Link className= "dropdown-item" to={buildFilterLink({
+    maxPrice:10000
+})}>Under 10k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 10000, maxPrice: 20000 })}>
+  10k–20k
+</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 20000, maxPrice: 30000 })}>
+  20k–30k
+</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 30000, maxPrice: 40000 })}>
+  30k–40k
+</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 40000, maxPrice: 50000 })}>
+  40k–50k
+</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 50000, maxPrice: 60000 })}>
+  50k–60k
+</Link>
       </div>
 
       <div className="dropdown-column" style={{ flex: '0.7' }}>
         <h4>By Material</h4>
-        <Link className="dropdown-item" to="/gold">Gold</Link>
-        <Link className="dropdown-item" to="/diamond">Diamond</Link>
-        <Link className="dropdown-item" to="/gemstone">Gemstone</Link>
+        <Link
+  className="dropdown-item"
+  to={buildFilterLink({ material: "gold" })}
+>
+  Gold
+</Link>
+
+<Link
+  className="dropdown-item"
+  to={buildFilterLink({ material: "diamond" })}
+>
+  Diamond
+</Link>
+
+<Link
+  className="dropdown-item"
+  to={buildFilterLink({ material: "gemstone" })}
+>
+  Gemstone
+</Link>
       </div>
 
       <div className="dropdown-column" style={{ flex: '0.7' }}>
         <h4>By Gender</h4>
-        <Link className="dropdown-item" to="/rings?gender=men">Male</Link>
-        <Link className="dropdown-item" to="/rings?gender=women">Female</Link>
-        <Link className="dropdown-item" to="/rings?gender=kids">Kids</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ gender: "men" })}>Male</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ gender: "women" })}>Female</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ gender: "kids" })}>Kids</Link>
       </div>
 
       <div className="dropdown-image" style={{ flexShrink: 0 }}>
@@ -350,48 +389,48 @@ if (label === 'Collections') {
         <h4>By Type</h4>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <Link className="dropdown-item" to="/collections/echo">Echo</Link>
-            <Link className="dropdown-item" to="/collections/akshaya">Akshaya</Link>
-            <Link className="dropdown-item" to="/collections/charms">Charms</Link>
-            <Link className="dropdown-item" to="/collections/evil-eye">Evil Eye</Link>
-            <Link className="dropdown-item" to="/collections/ti-amo">Ti Amo</Link>
-            <Link className="dropdown-item" to="/collections/tanishta">Tanishta</Link>
-            <Link className="dropdown-item" to="/collections/parineeta">Parineeta</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ collection: "echo" }, "/collections")}>Echo</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ collection: "akshaya" }, "/collections")}>Akshaya</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ collection: "charms" }, "/collections")}>Charms</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ collection: "evil-eye" }, "/collections")}>Evil Eye</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ collection: "ti-amo" }, "/collections")}>Ti Amo</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ collection: "tanishta" }, "/collections")}>Tanishta</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ collection: "parineeta" }, "/collections")}>Parineeta</Link>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <Link className="dropdown-item" to="/collections/tiny-tale">Tiny Tale</Link>
-            <Link className="dropdown-item" to="/collections/letter-of-love">Letter Of Love</Link>
-            <Link className="dropdown-item" to="/collections/orla">Orla</Link>
-            <Link className="dropdown-item" to="/collections/tisha">Tisha</Link>
-            <Link className="dropdown-item" to="/collections/aranka">Aranka</Link>
-            <Link className="dropdown-item" to="/collections/uphaar">Uphaar</Link>
-            <Link className="dropdown-item" to="/collections/panache">Panache</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ collection: "tiny-tale" }, "/collections")}>Tiny Tale</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ collection: "letter-of-love" }, "/collections")}>Letter Of Love</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ collection: "orla" }, "/collections")}>Orla</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ collection: "tisha" }, "/collections")}>Tisha</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ collection: "aranka" }, "/collections")}>Aranka</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ collection: "uphaar" }, "/collections")}>Uphaar</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ collection: "panache" }, "/collections")}>Panache</Link>
           </div>
         </div>
       </div>
 
       <div className="dropdown-column" style={{ flex: '0.7' }}>
         <h4>By Gender</h4>
-        <Link className="dropdown-item" to="/male">Male</Link>
-        <Link className="dropdown-item" to="/female">Female</Link>
-        <Link className="dropdown-item" to="/kids">Kids</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ gender: "men" }, "/collections")}>Male</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ gender: "women" }, "/collections")}>Female</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ gender: "kids" }, "/collections")}>Kids</Link>
       </div>
 
       <div className="dropdown-column" style={{ flex: '0.7' }}>
         <h4>By Price</h4>
-        <Link className="dropdown-item" to="/under-10k">Under 10k</Link>
-        <Link className="dropdown-item" to="/10k-20k">10k–20k</Link>
-        <Link className="dropdown-item" to="/20k-30k">20k–30k</Link>
-        <Link className="dropdown-item" to="/30k-40k">30k–40k</Link>
-        <Link className="dropdown-item" to="/40k-50k">40k–50k</Link>
-        <Link className="dropdown-item" to="/50k-60k">50k–60k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ maxPrice: 10000 }, "/collections")}>Under 10k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 10000, maxPrice: 20000 }, "/collections")}>10k–20k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 20000, maxPrice: 30000 }, "/collections")}>20k–30k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 30000, maxPrice: 40000 }, "/collections")}>30k–40k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 40000, maxPrice: 50000 }, "/collections")}>40k–50k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 50000, maxPrice: 60000 }, "/collections")}>50k–60k</Link>
       </div>
 
       <div className="dropdown-column" style={{ flex: '0.7' }}>
         <h4>By Material</h4>
-        <Link className="dropdown-item" to="/gold">Gold</Link>
-        <Link className="dropdown-item" to="/diamond">Diamond</Link>
-        <Link className="dropdown-item" to="/gemstone">Gemstone</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ material: "gold" }, "/collections")}>Gold</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ material: "diamond" }, "/collections")}>Diamond</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ material: "gemstone" }, "/collections")}>Gemstone</Link>
       </div>
 
       <div className="dropdown-image" style={{ flexShrink: 0 }}>
@@ -401,6 +440,68 @@ if (label === 'Collections') {
   );
 }
 
+if (label === 'Daily Wear') {
+  return (
+    <>
+      <div className="dropdown-column" style={{ flex: '0.7' }}>
+        <h4>By Price</h4>
+        <Link className="dropdown-item" to={buildFilterLink({ maxPrice: 10000 }, "/daily-wear")}>Under 10k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 10000, maxPrice: 20000 }, "/daily-wear")}>10k–20k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 20000, maxPrice: 30000 }, "/daily-wear")}>20k–30k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 30000, maxPrice: 40000 }, "/daily-wear")}>30k–40k</Link>
+      </div>
+
+      <div className="dropdown-column" style={{ flex: '0.7' }}>
+        <h4>By Material</h4>
+        <Link className="dropdown-item" to={buildFilterLink({ material: "gold" }, "/daily-wear")}>Gold</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ material: "diamond" }, "/daily-wear")}>Diamond</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ material: "gemstone" }, "/daily-wear")}>Gemstone</Link>
+      </div>
+
+      <div className="dropdown-column" style={{ flex: '0.7' }}>
+        <h4>By Gender</h4>
+        <Link className="dropdown-item" to={buildFilterLink({ gender: "men" }, "/daily-wear")}>Male</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ gender: "women" }, "/daily-wear")}>Female</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ gender: "kids" }, "/daily-wear")}>Kids</Link>
+      </div>
+
+      <div className="dropdown-image" style={{ flexShrink: 0 }}>
+        <img src={jewelleryImage} alt="daily wear" />
+      </div>
+    </>
+  );
+}
+
+if (label === 'Wedding') {
+  return (
+    <>
+      <div className="dropdown-column" style={{ flex: '0.7' }}>
+        <h4>By Price</h4>
+        <Link className="dropdown-item" to={buildFilterLink({ maxPrice: 30000 }, "/wedding")}>Under 30k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 30000, maxPrice: 50000 }, "/wedding")}>30k–50k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 50000, maxPrice: 100000 }, "/wedding")}>50k–1L</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 100000 }, "/wedding")}>Above 1L</Link>
+      </div>
+
+      <div className="dropdown-column" style={{ flex: '0.7' }}>
+        <h4>By Material</h4>
+        <Link className="dropdown-item" to={buildFilterLink({ material: "gold" }, "/wedding")}>Gold</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ material: "diamond" }, "/wedding")}>Diamond</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ material: "gemstone" }, "/wedding")}>Gemstone</Link>
+      </div>
+
+      <div className="dropdown-column" style={{ flex: '0.7' }}>
+        <h4>By Gender</h4>
+        <Link className="dropdown-item" to={buildFilterLink({ gender: "men" }, "/wedding")}>Male</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ gender: "women" }, "/wedding")}>Female</Link>
+      </div>
+
+      <div className="dropdown-image" style={{ flexShrink: 0 }}>
+        <img src={jewelleryImage} alt="wedding" />
+      </div>
+    </>
+  );
+}
              
 
               if (label === 'Contact') {
@@ -422,50 +523,110 @@ if (label === 'Collections') {
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <Link className="dropdown-item" to="/solitaire">Solitaire</Link>
                         <Link className="dropdown-item" to="/rings">Rings</Link>
-                        <Link className="dropdown-item" to="/pendants">Pendants</Link>
-                        <Link className="dropdown-item" to="/bracelets">Bracelets</Link>
-                        <Link className="dropdown-item" to="/mangalsutra-bracelets">Mangalsutra Bracelets</Link>
-                        <Link className="dropdown-item" to="/nosepin">Nosepin</Link>
-                        <Link className="dropdown-item" to="/watch-pin">Watch Pin</Link>
-                        <Link className="dropdown-item" to="/chain">Chain</Link>
+                        <Link className="dropdown-item" to={getCategoryPath("pendant")}>
+                          Pendants
+                        </Link>
+                        <Link className="dropdown-item" to={getCategoryPath("bracelet")}>
+                          Bracelets
+                        </Link>
+                        <Link className="dropdown-item" to={getCategoryPath("mangalsutra_bracelet")}>
+                          Mangalsutra Bracelets
+                        </Link>
+                        <Link className="dropdown-item" to={getCategoryPath("nosepin")}>
+                          Nosepin
+                        </Link>
+                        <Link className="dropdown-item" to={getCategoryPath("watchpin")}>
+                          Watch Pin
+                        </Link>
+                        <Link className="dropdown-item" to={getCategoryPath("chain")}>
+                          Chain
+                        </Link>
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <Link className="dropdown-item" to="/rakhi-pendants">Rakhi Pendants</Link>
-                        <Link className="dropdown-item" to="/earrings">Earrings</Link>
-                        <Link className="dropdown-item" to="/bangles">Bangles</Link>
-                        <Link className="dropdown-item" to="/mangalsutra">Mangalsutra</Link>
-                        <Link className="dropdown-item" to="/necklace">Necklace</Link>
-                        <Link className="dropdown-item" to="/watch-charm">Watch Charm</Link>
-                        <Link className="dropdown-item" to="/souvenir">Souvenir</Link>
+                        <Link className="dropdown-item" to={getCategoryPath("rakhi_pendant")}>
+                          Rakhi Pendants
+                        </Link>
+                        <Link className="dropdown-item" to={getCategoryPath("earrings")}>
+                          Earrings
+                        </Link>
+                        <Link className="dropdown-item" to={getCategoryPath("bangles")}>
+                          Bangles
+                        </Link>
+                        <Link className="dropdown-item" to={getCategoryPath("mangalsutra")}>
+                          Mangalsutra
+                        </Link>
+                        <Link className="dropdown-item" to={getCategoryPath("necklace")}>
+                          Necklace
+                        </Link>
+                        <Link className="dropdown-item" to={getCategoryPath("watchcharm")}>
+                          Watch Charm
+                        </Link>
+                        <Link className="dropdown-item" to={getCategoryPath("souvenir")}>
+                          Souvenir
+                        </Link>
                       </div>
                     </div>
                     <Link to="/all-jewellery" className="view-all-button">View All Jewellery</Link>
                   </div>
 
-                  {label !== 'Gold' && label !== 'Diamond' && (
-                    <div className="dropdown-column">
-                      <h4>By Material</h4>
-                      <Link className="dropdown-item" to="/gold">Gold</Link>
-                      <Link className="dropdown-item" to="/diamond">Diamond</Link>
-                      <Link className="dropdown-item" to="/gemstone">Gemstone</Link>
-                    </div>
-                  )}
+                 <div className="dropdown-column">
+  <h4>By Material</h4>
+
+  <Link
+    className="dropdown-item"
+    to={buildFilterLink({ material: "gold" })}
+  >
+    Gold
+  </Link>
+
+  <Link
+    className="dropdown-item"
+    to={buildFilterLink({ material: "diamond" })}
+  >
+    Diamond
+  </Link>
+
+  <Link
+    className="dropdown-item"
+    to={buildFilterLink({ material: "gemstone" })}
+  >
+    Gemstone
+  </Link>
+</div>
 
                   <div className="dropdown-column">
                     <h4>By Price</h4>
-                    <Link className="dropdown-item" to="/under-10k">Under 10k</Link>
-                    <Link className="dropdown-item" to="/10k-20k">10k–20k</Link>
-                    <Link className="dropdown-item" to="/20k-30k">20k–30k</Link>
-                    <Link className="dropdown-item" to="/30k-40k">30k–40k</Link>
-                    <Link className="dropdown-item" to="/40k-50k">40k–50k</Link>
-                    <Link className="dropdown-item" to="/50k-60k">50k–60k</Link>
+                    <Link className="dropdown-item" to={buildFilterLink({ maxPrice: 10000 })}>
+                      Under 10k
+                    </Link>
+                    <Link className="dropdown-item" to={buildFilterLink({ minPrice: 10000, maxPrice: 20000 })}>
+                      10k–20k
+                    </Link>
+                    <Link className="dropdown-item" to={buildFilterLink({ minPrice: 20000, maxPrice: 30000 })}>
+                      20k–30k
+                    </Link>
+                    <Link className="dropdown-item" to={buildFilterLink({ minPrice: 30000, maxPrice: 40000 })}>
+                      30k–40k
+                    </Link>
+                    <Link className="dropdown-item" to={buildFilterLink({ minPrice: 40000, maxPrice: 50000 })}>
+                      40k–50k
+                    </Link>
+                    <Link className="dropdown-item" to={buildFilterLink({ minPrice: 50000, maxPrice: 60000 })}>
+                      50k–60k
+                    </Link>
                   </div>
 
                   <div className="dropdown-column">
                     <h4>By Gender</h4>
-                    <Link className="dropdown-item" to="/male">Male</Link>
-                    <Link className="dropdown-item" to="/female">Female</Link>
-                    <Link className="dropdown-item" to="/kids">Kids</Link>
+                    <Link className="dropdown-item" to={buildFilterLink({ gender: "male" })}>
+                      Male
+                    </Link>
+                    <Link className="dropdown-item" to={buildFilterLink({ gender: "female" })}>
+                      Female
+                    </Link>
+                    <Link className="dropdown-item" to={buildFilterLink({ gender: "kids" })}>
+                      Kids
+                    </Link>
                   </div>
 
                   <div className="dropdown-image">

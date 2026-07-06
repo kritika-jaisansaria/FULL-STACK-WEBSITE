@@ -21,6 +21,14 @@ export const CATEGORY_SLUG_MAP = {
   male: { type: 'gender', value: 'men', label: 'Jewellery for Him' },
   female: { type: 'gender', value: 'women', label: 'Jewellery for Her' },
   kids: { type: 'gender', value: 'kids', label: 'Kids Jewellery' },
+
+  // By occasion (navbar top-level shortcuts)
+  'daily-wear': { type: 'occasion', value: 'daily_wear', label: 'Daily Wear' },
+  wedding: { type: 'occasion', value: 'wedding', label: 'Wedding Collection' },
+
+  // By material (navbar top-level shortcuts)
+  gold: { type: 'material', value: 'gold', label: 'Gold Jewellery' },
+  diamond: { type: 'material', value: 'diamond', label: 'Diamond Jewellery' },
 };
 
 // Every navbar link path that should render the category listing page
