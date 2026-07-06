@@ -31,7 +31,7 @@ const Navbar = () => {
   const location = useLocation();
   const [hoveredIndex, setHoveredIndex] = useState(null);
   
-  const buildFilterLink = (filters) => {
+  const buildFilterLink = (filters, basePath = location.pathname) => {
     const isSamePage = basePath === location.pathname;
  const params = new URLSearchParams(isSamePage ? location.search : "");
 
