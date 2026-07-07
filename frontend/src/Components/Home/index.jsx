@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../../context/CartContext';
+import { useWishlist } from '../../context/WishlistContext';
 import {
   FaUser,
   FaUserCircle,
@@ -14,6 +15,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { cartItems } = useCart();
+  const { wishlistCount, clearWishlist } = useWishlist();
 
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -29,6 +31,7 @@ const Header = () => {
     localStorage.removeItem('token');
     setUser(null);
     setShowDropdown(false);
+    clearWishlist(); // prevent this user's wishlist leaking into the next session
     navigate('/');
   };
 
@@ -104,7 +107,30 @@ const Header = () => {
         )}
 
         {/* Wishlist */}
-        <FaHeart style={{ cursor: 'pointer' }} onClick={() => navigate('/wishlist')} />
+        <div
+          style={{ position: 'relative', cursor: 'pointer' }}
+          onClick={() => navigate('/wishlist')}
+        >
+          <FaHeart />
+          {wishlistCount > 0 && (
+            <span
+              style={{
+                position: 'absolute',
+                top: -5,
+                right: -10,
+                background: '#b8860b',
+                color: '#fff',
+                borderRadius: '50%',
+                padding: '2px 6px',
+                fontSize: 12,
+                minWidth: 16,
+                textAlign: 'center',
+              }}
+            >
+              {wishlistCount}
+            </span>
+          )}
+        </div>
 
         {/* Cart */}
         <div

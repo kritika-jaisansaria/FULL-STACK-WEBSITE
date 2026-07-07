@@ -36,9 +36,26 @@ export const getAllProducts = async (req, res) => {
       karatage,
       minPrice,
       maxPrice,
+      search,
     } = req.query;
 
     const filter = {};
+    if (search) {
+  filter.$or = [
+    {
+      name: {
+        $regex: search,
+        $options: "i",
+      },
+    },
+    {
+      category: {
+        $regex: search,
+        $options: "i",
+      },
+    },
+  ];
+}
 
    // Category
 if (category) {

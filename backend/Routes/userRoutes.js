@@ -6,13 +6,41 @@ const router = express.Router();
 // Get all users
 router.get("/", async (req, res) => {
   try {
-    const users = await User.find()
-      .select("-password -otp -otpExpires -otpPurpose")
-      .sort({ createdAt: -1 });
+    const { q, role, page = 1, limit = 10 } = req.query;
 
-    res.json(users);
+    const filter = {};
+
+    // Search by name or email
+    if (q) {
+      filter.$or = [
+        { name: { $regex: q, $options: "i" } },
+        { email: { $regex: q, $options: "i" } },
+      ];
+    }
+
+    // Filter by role
+    if (role) {
+      filter.role = role;
+    }
+
+    const users = await User.find(filter)
+      .select("-password -otp -otpExpires -otpPurpose")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+
+    const totalUsers = await User.countDocuments(filter);
+
+    res.json({
+      users,
+      currentPage: Number(page),
+      totalPages: Math.ceil(totalUsers / limit),
+      totalUsers,
+    });
+
   } catch (err) {
     console.error(err);
+
     res.status(500).json({
       message: "Failed to fetch users",
     });

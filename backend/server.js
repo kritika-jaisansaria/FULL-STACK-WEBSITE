@@ -10,6 +10,7 @@ import userRoutes from "./Routes/userRoutes.js";
 import wishlistRoutes from './Routes/wishlist.js';
 import cartRoutes from './Routes/cartRoutes.js';
 import orderRoutes from './Routes/orderRoutes.js';
+import adminRoutes from "./Routes/adminRoutes.js";
 
 const app = express();
 
@@ -38,13 +39,14 @@ app.get('/ping', (req, res) => {
 });
 
 // Routes
-app.use('/api/users', authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use("/api/users", userRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/addresses', addressRoutes);
 app.use('/api/orders', orderRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Start Server
 const PORT = process.env.PORT || 8080;

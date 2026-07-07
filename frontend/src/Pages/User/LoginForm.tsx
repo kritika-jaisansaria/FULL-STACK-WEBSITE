@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const API = 'http://localhost:8080/api/users';
+const API = 'http://localhost:8080/api/auth';
 
 // ---------- Theme (matches site's gold / maroon jewellery theme) ----------
 const colors = {
