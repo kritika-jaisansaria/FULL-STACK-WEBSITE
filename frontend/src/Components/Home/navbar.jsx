@@ -502,6 +502,57 @@ if (label === 'Wedding') {
     </>
   );
 }
+
+if (label === 'Gold' || label === 'Diamond') {
+  // The material this whole dropdown represents (gold or diamond).
+  // Every link below carries this as a query param, on top of whichever
+  // base path (category page) it points to — so the material context
+  // is never lost, unlike the generic default dropdown's category links.
+  const materialValue = label === 'Gold' ? 'gold' : 'diamond';
+
+  return (
+    <>
+      <div className="dropdown-column" style={{ flex: '1.2' }}>
+        <h4>By Category</h4>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <Link className="dropdown-item" to={buildFilterLink({ material: materialValue }, "/rings")}>Rings</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ material: materialValue }, "/earrings")}>Earrings</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ material: materialValue }, "/necklace")}>Necklace</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ material: materialValue }, "/bangles")}>Bangles</Link>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <Link className="dropdown-item" to={buildFilterLink({ material: materialValue }, "/chain")}>Chain</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ material: materialValue }, "/pendants")}>Pendants</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ material: materialValue }, "/bracelets")}>Bracelets</Link>
+            <Link className="dropdown-item" to={buildFilterLink({ material: materialValue }, "/mangalsutra")}>Mangalsutra</Link>
+          </div>
+        </div>
+        <Link to={`/${label.toLowerCase()}`} className="view-all-button">View All {label}</Link>
+      </div>
+
+      <div className="dropdown-column" style={{ flex: '0.7' }}>
+        <h4>By Price</h4>
+        <Link className="dropdown-item" to={buildFilterLink({ maxPrice: 10000 }, `/${label.toLowerCase()}`)}>Under 10k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 10000, maxPrice: 20000 }, `/${label.toLowerCase()}`)}>10k–20k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 20000, maxPrice: 30000 }, `/${label.toLowerCase()}`)}>20k–30k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 30000, maxPrice: 50000 }, `/${label.toLowerCase()}`)}>30k–50k</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ minPrice: 50000 }, `/${label.toLowerCase()}`)}>Above 50k</Link>
+      </div>
+
+      <div className="dropdown-column" style={{ flex: '0.7' }}>
+        <h4>By Gender</h4>
+        <Link className="dropdown-item" to={buildFilterLink({ gender: "men" }, `/${label.toLowerCase()}`)}>Male</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ gender: "women" }, `/${label.toLowerCase()}`)}>Female</Link>
+        <Link className="dropdown-item" to={buildFilterLink({ gender: "kids" }, `/${label.toLowerCase()}`)}>Kids</Link>
+      </div>
+
+      <div className="dropdown-image" style={{ flexShrink: 0 }}>
+        <img src={jewelleryImage} alt={label} />
+      </div>
+    </>
+  );
+}
              
 
               if (label === 'Contact') {
@@ -558,7 +609,7 @@ if (label === 'Wedding') {
                         <Link className="dropdown-item" to={getCategoryPath("necklace")}>
                           Necklace
                         </Link>
-                        <Link className="dropdown-item" to={getCategoryPath("watchcharm")}>
+                        <Link className="dropdown-item" to={getCategoryPath("watch_charm")}>
                           Watch Charm
                         </Link>
                         <Link className="dropdown-item" to={getCategoryPath("souvenir")}>
