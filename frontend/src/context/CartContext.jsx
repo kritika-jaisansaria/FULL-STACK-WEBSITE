@@ -3,69 +3,117 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const CartContext = createContext();
+
 export const useCart = () => useContext(CartContext);
+
+const API = "http://localhost:8080";
+
+// Returns the latest logged-in user every time.
+// This avoids stale localStorage values after login/logout.
+const getUserInfo = () => {
+  try {
+    return JSON.parse(localStorage.getItem("userInfo"));
+  } catch {
+    return null;
+  }
+};
+
+const getCartErrorMessage = (err, fallback) => {
+  if (!err.response) {
+    return "Network error. Please check your connection.";
+  }
+
+  const { status, data } = err.response;
+
+  if (status === 401) {
+    localStorage.removeItem("userInfo");
+    return "Your session has expired. Please login again.";
+  }
+
+  if (status === 404) {
+    return data?.message || "Item not found.";
+  }
+
+  if (status >= 500) {
+    return "Something went wrong. Please try again later.";
+  }
+
+  return data?.message || fallback;
+};
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
-  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const fetchCart = async () => {
-    if (!userInfo?.token) return;
+    const userInfo = getUserInfo();
 
-    try {
-      setLoading(true);
-      const { data } = await axios.get('http://localhost:8080/api/cart', {
-        headers: { Authorization: `Bearer ${userInfo.token}` },
-      });
-      setCartItems(data || []);
-    } catch (err) {
-      console.error("Cart fetch failed", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCart();
-  }, [userInfo?.token]);
-
-  const addToCart = async (product, quantity = 1) => {
     if (!userInfo?.token) {
-      toast.error('Please login to add items to your cart');
+      setCartItems([]);
+      setInitialLoad(false);
       return;
     }
 
     try {
       setLoading(true);
-      await axios.post(
-        'http://localhost:8080/api/cart/add',
-        { productId: product._id, quantity },
-        { headers: { Authorization: `Bearer ${userInfo.token}` } }
-      );
-      await fetchCart();
+
+      const { data } = await axios.get(`${API}/api/cart`, {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      });
+
+      setCartItems(data || []);
     } catch (err) {
-      console.error("Add to cart failed", err);
-      toast.error(err.response?.data?.message || 'Failed to add to cart. Please try again.');
-      throw err;
+      console.error("Fetch Cart Error:", err);
+
+      if (err.response?.status === 401) {
+        localStorage.removeItem("userInfo");
+        setCartItems([]);
+      }
+
+      toast.error(getCartErrorMessage(err, "Failed to load cart."));
     } finally {
       setLoading(false);
+      setInitialLoad(false);
     }
   };
 
-  const removeFromCart = async (productId) => {
-    if (!userInfo?.token) return;
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  const addToCart = async (product, quantity = 1) => {
+    const userInfo = getUserInfo();
+
+    if (!userInfo?.token) {
+      toast.error("Please login to add items to cart.");
+      return;
+    }
 
     try {
       setLoading(true);
-      await axios.delete(
-        `http://localhost:8080/api/cart/remove/${productId}`,
-        { headers: { Authorization: `Bearer ${userInfo.token}` } }
+
+      await axios.post(
+        `${API}/api/cart/add`,
+        {
+          productId: product._id,
+          quantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        }
       );
+
       await fetchCart();
     } catch (err) {
-      console.error("Remove failed", err);
-      toast.error(err.response?.data?.message || 'Failed to remove item. Please try again.');
+      console.error("Add Cart Error:", err);
+
+      toast.error(getCartErrorMessage(err, "Failed to add to cart."));
+
       throw err;
     } finally {
       setLoading(false);
@@ -73,19 +121,58 @@ export const CartProvider = ({ children }) => {
   };
 
   const updateQuantity = async (productId, quantity) => {
+    const userInfo = getUserInfo();
+
     if (!userInfo?.token) return;
 
     try {
       setLoading(true);
+
       await axios.put(
-        'http://localhost:8080/api/cart/update',
-        { productId, quantity },
-        { headers: { Authorization: `Bearer ${userInfo.token}` } }
+        `${API}/api/cart/update`,
+        {
+          productId,
+          quantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        }
       );
+
       await fetchCart();
     } catch (err) {
-      console.error("Update quantity failed", err);
-      toast.error(err.response?.data?.message || 'Failed to update quantity. Please try again.');
+      console.error("Update Cart Error:", err);
+
+      toast.error(getCartErrorMessage(err, "Failed to update quantity."));
+
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const removeFromCart = async (productId) => {
+    const userInfo = getUserInfo();
+
+    if (!userInfo?.token) return;
+
+    try {
+      setLoading(true);
+
+      await axios.delete(`${API}/api/cart/remove/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      });
+
+      await fetchCart();
+    } catch (err) {
+      console.error("Remove Cart Error:", err);
+
+      toast.error(getCartErrorMessage(err, "Failed to remove item."));
+
       throw err;
     } finally {
       setLoading(false);
@@ -93,32 +180,48 @@ export const CartProvider = ({ children }) => {
   };
 
   const clearCart = async () => {
+    const userInfo = getUserInfo();
+
     if (!userInfo?.token) return;
 
     try {
       setLoading(true);
-      await axios.delete('http://localhost:8080/api/cart/clear', {
-        headers: { Authorization: `Bearer ${userInfo.token}` },
+
+      await axios.delete(`${API}/api/cart/clear`, {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
       });
+
       setCartItems([]);
     } catch (err) {
-      console.error("Clear cart failed", err);
-      toast.error(err.response?.data?.message || 'Failed to clear cart. Please try again.');
+      console.error("Clear Cart Error:", err);
+
+      toast.error(getCartErrorMessage(err, "Failed to clear cart."));
+
       throw err;
     } finally {
       setLoading(false);
     }
   };
 
+  const resetCart = () => {
+  setCartItems([]);
+  setInitialLoad(false);
+};
+
   return (
     <CartContext.Provider
       value={{
         cartItems,
+        loading,
+        initialLoad,
+        fetchCart,
         addToCart,
-        removeFromCart,
         updateQuantity,
+        removeFromCart,
         clearCart,
-        loading
+        resetCart,
       }}
     >
       {children}

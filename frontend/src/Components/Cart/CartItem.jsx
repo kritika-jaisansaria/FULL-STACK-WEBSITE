@@ -11,8 +11,9 @@ const CartItem = ({ item }) => {
   if (!item || !item.product) return null;
 
   const { name, price, originalPrice, media, metalDetails, _id: productId } = item.product;
-  const grossWeight = metalDetails?.GrossWeight || '—';
-
+  const grossWeight = metalDetails?.grossWeight || "—";
+console.log(item.product);
+console.log(item.product?.metalDetails);
   const handleDecrement = () => {
     if (item.quantity > 1) updateQuantity(productId, item.quantity - 1);
   };
@@ -23,8 +24,18 @@ const CartItem = ({ item }) => {
 
   const handleMoveToWishlist = async () => {
     setLoading(true);
-    await toggleWishlist(item.product);
-    await removeFromCart(productId);
+    try{
+
+await toggleWishlist(item.product);
+
+await removeFromCart(productId);
+
+}
+catch(err){
+
+console.error(err);
+
+}
     setLoading(false);
     setShowModal(false);
   };
@@ -39,7 +50,7 @@ const CartItem = ({ item }) => {
       <div style={itemContainer}>
         {/* Product Image */}
         <img
-          src={media?.[0]?.url || '/placeholder.png'}
+          src={media?.[0]?.url || 'https://via.placeholder.com/300'}
           alt={name}
           width="100"
           height="100"
@@ -50,7 +61,7 @@ const CartItem = ({ item }) => {
         <div style={{ marginLeft: '1rem', flexGrow: 1 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div>
-              <p style={{ margin: 0, fontWeight: 'bold', fontSize: '1.1rem' }}>₹ {price}</p>
+              <p style={{ margin: 0, fontWeight: 'bold', fontSize: '1.1rem' }}>₹ {Number(price).toLocaleString("en-IN")}</p>
               <p style={{ margin: '0.2rem 0 0.5rem', fontSize: '1rem', color: '#333' }}>{name}</p>
               <p style={{ fontSize: '0.9rem', color: '#777', marginBottom: 4 }}>
                 Weight: <span style={{ color: '#333' }}>{grossWeight} g</span>
@@ -97,12 +108,12 @@ const CartItem = ({ item }) => {
             </div>
             <hr style={{ margin: '10px 0' }} />
             <div style={modalBody}>
-              <img src={media?.[0]?.url || '/placeholder.png'} alt={name} style={modalImage} />
+              <img src={media?.[0]?.url || 'https://via.placeholder.com/300'} alt={name} style={modalImage} />
               <div>
                 <div style={priceRow}>
-                  <span style={modalPrice}>₹ {price}</span>
+                  <span style={modalPrice}>₹ {Number(price).toLocaleString("en-IN")}</span>
                   {originalPrice && (
-                    <span style={modalStrike}>₹ {originalPrice}</span>
+                    <span style={modalStrike}>₹ {Number(originalPrice).toLocaleString("en-IN")}</span>
                   )}
                 </div>
                 <p style={modalName}>{name}</p>

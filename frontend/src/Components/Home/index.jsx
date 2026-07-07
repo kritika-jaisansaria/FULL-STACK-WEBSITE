@@ -14,7 +14,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { cartItems } = useCart();
+  const { cartItems, resetCart } = useCart();
   const { wishlistCount, clearWishlist } = useWishlist();
 
   const [user, setUser] = useState(null);
@@ -26,14 +26,18 @@ const Header = () => {
     setUser(storedUser);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('token');
-    setUser(null);
-    setShowDropdown(false);
-    clearWishlist(); // prevent this user's wishlist leaking into the next session
-    navigate('/');
-  };
+ const handleLogout = () => {
+  localStorage.removeItem("userInfo");
+  localStorage.removeItem("token");
+
+  resetCart();
+  clearWishlist();
+
+  setUser(null);
+  setShowDropdown(false);
+
+  navigate("/");
+};
 
   return (
     <div
