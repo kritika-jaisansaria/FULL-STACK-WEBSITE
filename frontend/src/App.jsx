@@ -54,7 +54,6 @@ function AppRoutes() {
            <Route path="/:category/:style" element={<AllJewellery />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/wishlist" element={<Wishlist />} />
-          <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/account" element={<Account />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout/address" element={<CheckoutAddress />} />

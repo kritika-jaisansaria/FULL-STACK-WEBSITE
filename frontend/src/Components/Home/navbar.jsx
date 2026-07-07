@@ -223,7 +223,7 @@ const Navbar = () => {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Link className="dropdown-item" to="/earrings/chandelier">Chandelier</Link>
             <Link className="dropdown-item" to="/earrings/front_back">Front Back</Link>
-            <Link className="dropdown-item" to="/earrings/sui-dhaga">Sui Dhaga</Link>
+            <Link className="dropdown-item" to="/earrings/sui_dhaga">Sui Dhaga</Link>
             <Link className="dropdown-item" to="/earrings/studs">Studs</Link>
             <Link className="dropdown-item" to="/earrings/floral">Floral</Link>
             <Link className="dropdown-item" to="/earrings/drops">Drops</Link>
@@ -312,7 +312,7 @@ if (label === 'Rings') {
             <Link className="dropdown-item" to="/rings/adjustable">Adjustable</Link>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <Link className="dropdown-item" to="/rings/couple-bands">Couple Bands</Link>
+            <Link className="dropdown-item" to="/rings/couple_bands">Couple Bands</Link>
             <Link className="dropdown-item" to="/rings/engagement">Engagement</Link>
             <Link className="dropdown-item" to="/rings/infinity">Infinity</Link>
             <Link className="dropdown-item" to="/rings/fashion">Fashion</Link>

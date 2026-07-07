@@ -284,13 +284,27 @@ const ManageProducts = () => {
               {renderInput("Brand", "brand", product.generalDetails.brand, handleGeneralChange)}
 
               <select name="collection" value={product.generalDetails.collection} onChange={handleGeneralChange} style={inputStyle}>
-                <option value="">Select Collection</option>
-                <option value="festive">Festive</option>
-                <option value="bestseller">Bestseller</option>
-                <option value="new_arrivals">New Arrivals</option>
-                <option value="bridal">Bridal</option>
-                <option value="everyday">Everyday</option>
-              </select>
+  <option value="">Select Collection</option>
+  <option value="festive">Festive</option>
+  <option value="bestseller">Bestseller</option>
+  <option value="new_arrivals">New Arrivals</option>
+  <option value="bridal">Bridal</option>
+  <option value="everyday">Everyday</option>
+  <option value="echo">Echo</option>
+  <option value="akshaya">Akshaya</option>
+  <option value="charms">Charms</option>
+  <option value="evil-eye">Evil Eye</option>
+  <option value="ti-amo">Ti Amo</option>
+  <option value="tanishta">Tanishta</option>
+  <option value="parineeta">Parineeta</option>
+  <option value="tiny-tale">Tiny Tale</option>
+  <option value="letter-of-love">Letter Of Love</option>
+  <option value="orla">Orla</option>
+  <option value="tisha">Tisha</option>
+  <option value="aranka">Aranka</option>
+  <option value="uphaar">Uphaar</option>
+  <option value="panache">Panache</option>
+</select>
 
               <select name="gender" value={product.generalDetails.gender} onChange={handleGeneralChange} style={inputStyle}>
                 <option value="">Select Gender</option>
