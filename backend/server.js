@@ -6,6 +6,7 @@ import cors from 'cors';
 import addressRoutes from './Routes/address.js';
 import authRoutes from './Routes/auth.js';
 import productRoutes from './Routes/productRoutes.js';
+import userRoutes from "./Routes/userRoutes.js";
 import wishlistRoutes from './Routes/wishlist.js';
 import cartRoutes from './Routes/cartRoutes.js';
 import orderRoutes from './Routes/orderRoutes.js';
@@ -39,6 +40,7 @@ app.get('/ping', (req, res) => {
 // Routes
 app.use('/api/users', authRoutes);
 app.use('/api/products', productRoutes);
+app.use("/api/users", userRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/addresses', addressRoutes);
