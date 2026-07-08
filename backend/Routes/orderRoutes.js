@@ -6,7 +6,9 @@ import {
   getMyOrders,
   getMyOrderById,
   getAllOrders,
+  getOrderById,
   updateOrderStatus,
+  deleteOrder,
 } from '../Controllers/orderController.js';
 
 const router = express.Router();
@@ -18,6 +20,8 @@ router.get('/mine/:id', protectUser, getMyOrderById);
 
 // Admin routes
 router.get('/', protectAdmin, getAllOrders);
-router.put('/:id/status', protectAdmin, updateOrderStatus);
+router.get('/:id', protectAdmin, getOrderById);
+router.patch('/:id/status', protectAdmin, updateOrderStatus);
+router.delete('/:id', protectAdmin, deleteOrder);
 
 export default router;

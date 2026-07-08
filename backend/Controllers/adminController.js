@@ -10,12 +10,33 @@ export const getDashboardStats = async (req, res) => {
       totalOrders,
       totalAdmins,
       pendingOrders,
+      deliveredOrders,
+      cancelledOrders,
+      revenue,
     ] = await Promise.all([
       User.countDocuments(),
       Product.countDocuments(),
       Order.countDocuments(),
       User.countDocuments({ role: "admin" }),
-      Order.countDocuments({ orderStatus: "placed" }),
+      Order.countDocuments({ orderStatus: "pending" }),
+      Order.countDocuments({ orderStatus: "delivered" }),
+      Order.countDocuments({ orderStatus: "cancelled" }),
+
+      Order.aggregate([
+        {
+          $match: {
+            paymentStatus: "paid",
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalRevenue: {
+              $sum: "$finalAmount",
+            },
+          },
+        },
+      ]),
     ]);
 
     res.json({
@@ -24,8 +45,10 @@ export const getDashboardStats = async (req, res) => {
       totalOrders,
       totalAdmins,
       pendingOrders,
+      deliveredOrders,
+      cancelledOrders,
+      totalRevenue: revenue[0]?.totalRevenue || 0,
     });
-
   } catch (err) {
     console.error(err);
 

@@ -30,6 +30,7 @@ import { CATEGORY_SLUG_MAP } from './utils/categoryRoutes';
 // Admin Pages
 import AdminHome from './Pages/admin/adminHome';
 import AdminProducts from './Pages/admin/AdminProducts';
+import AdminOrders from './Pages/admin/AdminOrders';
 
 /* ================= ROUTES WITH MODAL SUPPORT ================= */
 
@@ -65,6 +66,7 @@ function AppRoutes() {
         {/* ADMIN ROUTES */}
         <Route path="/admin" element={<AdminHome />}>
           <Route path="products" element={<AdminProducts />} />
+          <Route path="orders" element={<AdminOrders />} />
         </Route>
       </Routes>
 

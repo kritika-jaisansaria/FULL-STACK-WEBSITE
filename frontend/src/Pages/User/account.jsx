@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const STATUS_COLORS = {
-  placed: '#b8860b',
+  pending: '#b8860b',
+  confirmed: '#0288d1',
   processing: '#1976d2',
   shipped: '#7b1fa2',
   delivered: '#2e7d32',
@@ -79,12 +80,30 @@ const Account = () => {
               <div key={order._id} style={orderCard}>
                 <div style={orderCardHeader}>
                   <div>
-                    <p style={orderIdText}>Order #{order._id.slice(-8).toUpperCase()}</p>
-                    <p style={orderDateText}>
-                      {new Date(order.createdAt).toLocaleDateString('en-IN', {
-                        day: 'numeric', month: 'short', year: 'numeric'
-                      })}
-                    </p>
+                    <div>
+  <p style={orderIdText}>
+    Order {order.orderNumber || `#${order._id.slice(-8).toUpperCase()}`}
+  </p>
+
+  <p style={orderDateText}>
+    {new Date(order.createdAt).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    })}
+  </p>
+
+  <p style={orderDateText}>
+    Payment: {order.paymentMethod}
+  </p>
+
+  {order.estimatedDelivery && (
+    <p style={orderDateText}>
+      Delivery by{" "}
+      {new Date(order.estimatedDelivery).toLocaleDateString("en-IN")}
+    </p>
+  )}
+</div>
                   </div>
                   <span style={{ ...statusBadge, backgroundColor: STATUS_COLORS[order.orderStatus] || '#999' }}>
                     {order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}
@@ -101,8 +120,22 @@ const Account = () => {
                 </div>
 
                 <div style={orderFooter}>
+                  <div
+  style={{
+    display: "flex",
+    justifyContent: "flex-end",
+    marginTop: "12px",
+  }}
+>
+  <button
+    style={viewBtn}
+    onClick={() => navigate(`/orders/${order._id}`)}
+  >
+    View Details
+  </button>
+</div>
                   <span>Total</span>
-                  <span style={{ fontWeight: 700 }}>₹{order.totalAmount.toLocaleString('en-IN')}</span>
+                  <span style={{ fontWeight: 700 }}>₹{(order.finalAmount ?? order.totalAmount).toLocaleString('en-IN')}</span>
                 </div>
               </div>
             ))}
@@ -225,6 +258,15 @@ const orderFooter = {
   justifyContent: 'space-between',
   fontSize: '15px',
   color: '#3e0f0f',
+};
+const viewBtn = {
+  padding: "8px 16px",
+  background: "#7b2424",
+  color: "#fff",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontWeight: 600,
 };
 
 export default Account;

@@ -75,6 +75,15 @@ const CheckoutAddress = () => {
     });
 
     setSavedAddresses(data);
+    const defaultAddress = data.find(addr => addr.isDefault);
+
+    if (defaultAddress) {
+  setSelectedAddressId(defaultAddress._id);
+  localStorage.setItem(
+    "selectedShippingAddress",
+    JSON.stringify(defaultAddress)
+  );
+}
 
   } catch (err) {
     console.error("Failed to fetch addresses", err);
@@ -205,8 +214,12 @@ const CheckoutAddress = () => {
     }
     setSelectedAddressId(addr._id);
     setDeliveringId(addr._id);
-    localStorage.setItem('selectedShippingAddress', JSON.stringify(addr));
-    navigate('/payment');
+    localStorage.setItem(
+  "selectedShippingAddress",
+  JSON.stringify(addr)
+);
+
+toast.success("Delivery address selected.");
   };
 
   const handleChange = (e) => {
@@ -714,6 +727,10 @@ const CheckoutAddress = () => {
               const selected = savedAddresses.find(a => a._id === selectedAddressId);
               if (!selected) return toast.error("Please select a shipping address to continue.");
               localStorage.setItem('selectedShippingAddress', JSON.stringify(selected));
+              if (subtotal <= 0) {
+  toast.error("Your cart is empty.");
+  return;
+}
               navigate('/payment');
             }}
             style={proceedButtonStyle}
