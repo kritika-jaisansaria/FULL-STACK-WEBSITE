@@ -164,42 +164,136 @@ const ManageOrders = () => {
           </p>
         </div>
       ) : (
-        <div style={tableWrapperStyle}>
-          <table style={tableStyle}>
-            <thead>
-              <tr>
-                <th style={thStyle}>Order ID</th>
-                <th style={thStyle}>Customer</th>
-                <th style={thStyle}>Date</th>
-                <th style={thStyle}>Items</th>
-                <th style={thStyle}>Total</th>
-                <th style={thStyle}>Payment</th>
-                <th style={thStyle}>Status</th>
-                <th style={thStyle}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredOrders.map((order) => (
-                <tr key={order._id} style={trStyle}>
-                  <td style={tdStyle}>
-                    <span style={monoStyle}>{order.orderNumber || `#${order._id.slice(-8).toUpperCase()}`}</span>
-                  </td>
-                  <td style={tdStyle}>
-                    <div style={{ fontWeight: 600 }}>
-                      {order.user?.name || `${order.shippingAddress?.firstName || ''} ${order.shippingAddress?.lastName || ''}`.trim() || 'Guest'}
+        <>
+          {/* Desktop table view */}
+          <div className="orders-table-view" style={tableWrapperStyle}>
+            <table style={tableStyle}>
+              <thead>
+                <tr>
+                  <th style={thStyle}>Order ID</th>
+                  <th style={thStyle}>Customer</th>
+                  <th style={thStyle}>Date</th>
+                  <th style={thStyle}>Items</th>
+                  <th style={thStyle}>Total</th>
+                  <th style={thStyle}>Payment</th>
+                  <th style={thStyle}>Status</th>
+                  <th style={thStyle}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredOrders.map((order) => (
+                  <tr key={order._id} style={trStyle}>
+                    <td style={tdStyle}>
+                      <span style={monoStyle}>{order.orderNumber || `#${order._id.slice(-8).toUpperCase()}`}</span>
+                    </td>
+                    <td style={tdStyle}>
+                      <div style={{ fontWeight: 600 }}>
+                        {order.user?.name || `${order.shippingAddress?.firstName || ''} ${order.shippingAddress?.lastName || ''}`.trim() || 'Guest'}
+                      </div>
+                      <div style={{ fontSize: 12, color: '#888' }}>
+                        {order.user?.email || order.shippingAddress?.email}
+                      </div>
+                    </td>
+                    <td style={tdStyle}>
+                      {new Date(order.createdAt).toLocaleDateString('en-IN', {
+                        day: 'numeric', month: 'short', year: 'numeric',
+                      })}
+                    </td>
+                    <td style={tdStyle}>{order.items?.length || 0}</td>
+                    <td style={tdStyle}>₹{(order.finalAmount ?? order.totalAmount)?.toLocaleString('en-IN')}</td>
+                    <td style={tdStyle}>
+                      <span style={{
+                        ...paymentBadgeStyle,
+                        backgroundColor: order.paymentStatus === 'paid' ? '#e8f5e9' : '#fff3e0',
+                        color: order.paymentStatus === 'paid' ? '#2e7d32' : '#b8860b',
+                      }}>
+                        {formatLabel(order.paymentStatus)}
+                      </span>
+                    </td>
+                    <td style={tdStyle}>
+                      <div style={statusCellStyle}>
+                        <span style={{
+                          ...statusBadgeStyle,
+                          backgroundColor: STATUS_COLORS[order.orderStatus] || '#999',
+                        }}>
+                          {formatLabel(order.orderStatus)}
+                        </span>
+                        <select
+                          value={order.orderStatus}
+                          disabled={updatingId === order._id}
+                          onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                          style={statusSelectStyle}
+                        >
+                          {STATUS_OPTIONS.map((s) => (
+                            <option key={s} value={s}>{formatLabel(s)}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </td>
+                    <td style={tdStyle}>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: 8,
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <button style={viewButtonStyle} onClick={() => setSelectedOrder(order)}>
+                          View
+                        </button>
+                        <button
+                          style={deleteButtonStyle}
+                          disabled={deletingId === order._id}
+                          onClick={() => handleDelete(order._id)}
+                        >
+                          {deletingId === order._id ? '...' : 'Delete'}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile card view — same data, no horizontal scroll */}
+          <div className="orders-card-view" style={cardListStyle}>
+            {filteredOrders.map((order) => (
+              <div key={order._id} style={cardStyle}>
+                <div style={cardTopRowStyle}>
+                  <span style={monoStyle}>
+                    {order.orderNumber || `#${order._id.slice(-8).toUpperCase()}`}
+                  </span>
+                  <span style={{
+                    ...statusBadgeStyle,
+                    backgroundColor: STATUS_COLORS[order.orderStatus] || '#999',
+                  }}>
+                    {formatLabel(order.orderStatus)}
+                  </span>
+                </div>
+
+                <div style={cardCustomerStyle}>
+                  <div style={{ fontWeight: 600 }}>
+                    {order.user?.name || `${order.shippingAddress?.firstName || ''} ${order.shippingAddress?.lastName || ''}`.trim() || 'Guest'}
+                  </div>
+                  <div style={{ fontSize: 12, color: '#888' }}>
+                    {order.user?.email || order.shippingAddress?.email}
+                  </div>
+                </div>
+
+                <div style={cardMetaGridStyle}>
+                  <div>
+                    <div style={cardMetaLabelStyle}>Date</div>
+                    <div style={cardMetaValueStyle}>
+                      {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </div>
-                    <div style={{ fontSize: 12, color: '#888' }}>
-                      {order.user?.email || order.shippingAddress?.email}
-                    </div>
-                  </td>
-                  <td style={tdStyle}>
-                    {new Date(order.createdAt).toLocaleDateString('en-IN', {
-                      day: 'numeric', month: 'short', year: 'numeric',
-                    })}
-                  </td>
-                  <td style={tdStyle}>{order.items?.length || 0}</td>
-                  <td style={tdStyle}>₹{(order.finalAmount ?? order.totalAmount)?.toLocaleString('en-IN')}</td>
-                  <td style={tdStyle}>
+                  </div>
+                  <div>
+                    <div style={cardMetaLabelStyle}>Items</div>
+                    <div style={cardMetaValueStyle}>{order.items?.length || 0}</div>
+                  </div>
+                  <div>
+                    <div style={cardMetaLabelStyle}>Payment</div>
                     <span style={{
                       ...paymentBadgeStyle,
                       backgroundColor: order.paymentStatus === 'paid' ? '#e8f5e9' : '#fff3e0',
@@ -207,50 +301,45 @@ const ManageOrders = () => {
                     }}>
                       {formatLabel(order.paymentStatus)}
                     </span>
-                  </td>
-                  <td style={tdStyle}>
-                    <div style={statusCellStyle}>
-                      <span style={{
-                        ...statusBadgeStyle,
-                        backgroundColor: STATUS_COLORS[order.orderStatus] || '#999',
-                      }}>
-                        {formatLabel(order.orderStatus)}
-                      </span>
-                      <select
-                        value={order.orderStatus}
-                        disabled={updatingId === order._id}
-                        onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                        style={statusSelectStyle}
-                      >
-                        {STATUS_OPTIONS.map((s) => (
-                          <option key={s} value={s}>{formatLabel(s)}</option>
-                        ))}
-                      </select>
+                  </div>
+                  <div>
+                    <div style={cardMetaLabelStyle}>Total</div>
+                    <div style={{ ...cardMetaValueStyle, fontWeight: 700 }}>
+                      ₹{(order.finalAmount ?? order.totalAmount)?.toLocaleString('en-IN')}
                     </div>
-                  </td>
-                  <td style={tdStyle}>
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      <button style={viewButtonStyle} onClick={() => setSelectedOrder(order)}>
-                        View
-                      </button>
-                      <button
-                        style={deleteButtonStyle}
-                        disabled={deletingId === order._id}
-                        onClick={() => handleDelete(order._id)}
-                      >
-                        {deletingId === order._id ? '...' : 'Delete'}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </div>
+                </div>
+
+                <select
+                  value={order.orderStatus}
+                  disabled={updatingId === order._id}
+                  onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                  style={{ ...statusSelectStyle, width: '100%' }}
+                >
+                  {STATUS_OPTIONS.map((s) => (
+                    <option key={s} value={s}>{formatLabel(s)}</option>
+                  ))}
+                </select>
+
+                <div style={cardActionsStyle}>
+                  <button style={{ ...viewButtonStyle, flex: 1 }} onClick={() => setSelectedOrder(order)}>
+                    View
+                  </button>
+                  <button
+                    style={{ ...deleteButtonStyle, flex: 1 }}
+                    disabled={deletingId === order._id}
+                    onClick={() => handleDelete(order._id)}
+                  >
+                    {deletingId === order._id ? '...' : 'Delete'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* Order Details Modal */}
-      {selectedOrder && console.log(selectedOrder.items)}
       {selectedOrder && (
         <div style={popupOverlay} onClick={() => setSelectedOrder(null)}>
           <div style={popupContent} onClick={(e) => e.stopPropagation()}>
@@ -292,63 +381,63 @@ const ManageOrders = () => {
               {selectedOrder.shippingAddress?.city}, {selectedOrder.shippingAddress?.state} - {selectedOrder.shippingAddress?.pincode}<br />
               📞 {selectedOrder.shippingAddress?.mobile} &nbsp;•&nbsp; ✉ {selectedOrder.shippingAddress?.email}
             </p>
-<h3 style={sectionTitleStyle}>Order Timeline</h3>
+            <h3 style={sectionTitleStyle}>Order Timeline</h3>
 
-<div style={{ marginBottom: "20px" }}>
-  {selectedOrder.statusHistory?.map((history, index) => (
-    <div
-      key={index}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        marginBottom: "10px",
-      }}
-    >
-      <div
-  style={{
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    marginRight: 12,
-  }}
->
-  <div
-    style={{
-      width: 12,
-      height: 12,
-      borderRadius: "50%",
-      backgroundColor: STATUS_COLORS[history.status] || "#999",
-    }}
-  />
+            <div style={{ marginBottom: "20px" }}>
+              {selectedOrder.statusHistory?.map((history, index) => (
+                <div
+                  key={index}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      marginRight: 12,
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 12,
+                        height: 12,
+                        borderRadius: "50%",
+                        backgroundColor: STATUS_COLORS[history.status] || "#999",
+                      }}
+                    />
 
-  {index !== selectedOrder.statusHistory.length - 1 && (
-    <div
-      style={{
-        width: 2,
-        height: 28,
-        backgroundColor: "#ddd",
-      }}
-    />
-  )}
-</div>
+                    {index !== selectedOrder.statusHistory.length - 1 && (
+                      <div
+                        style={{
+                          width: 2,
+                          height: 28,
+                          backgroundColor: "#ddd",
+                        }}
+                      />
+                    )}
+                  </div>
 
-      <div>
-        <div style={{ fontWeight: 600 }}>
-          {formatLabel(history.status)}
-        </div>
+                  <div>
+                    <div style={{ fontWeight: 600 }}>
+                      {formatLabel(history.status)}
+                    </div>
 
-        <div
-          style={{
-            fontSize: 12,
-            color: "#777",
-          }}
-        >
-          {new Date(history.updatedAt).toLocaleString("en-IN")}
-        </div>
-      </div>
-    </div>
-  ))}
-</div>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: "#777",
+                      }}
+                    >
+                      {new Date(history.updatedAt).toLocaleString("en-IN")}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
             <h3 style={sectionTitleStyle}>Items</h3>
             <div style={itemsListStyle}>
               {selectedOrder.items?.map((item, i) => (
@@ -389,16 +478,49 @@ const ManageOrders = () => {
           </div>
         </div>
       )}
+
+      <style>{`
+        .orders-card-view {
+          display: none;
+        }
+
+        @media (max-width: 1024px) {
+          h1 { font-size: 26px !important; }
+          table { font-size: 13px; }
+          button { font-size: 12px; }
+          select { font-size: 12px; }
+
+          .orders-table-view {
+            display: none !important;
+          }
+          .orders-card-view {
+            display: flex !important;
+          }
+        }
+
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 };
 
 /* ---------- Styles (matches existing admin theme: gold/brown palette) ---------- */
 
-const pageStyle = { padding: 40, fontFamily: "'Inter', sans-serif" };
-
+const pageStyle = {
+  width: "100%",
+  padding: "24px",
+  boxSizing: "border-box",
+  fontFamily: "'Inter', sans-serif",
+  overflowX: "hidden",
+};
 const headerStyle = {
-  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  flexWrap: "wrap",
+  gap: "16px",
   marginBottom: 20, borderBottom: '2px solid #a67c00', paddingBottom: 20,
 };
 
@@ -416,15 +538,22 @@ const topButtonStyle = {
 };
 
 const filtersBarStyle = {
-  display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap',
+  display: "flex",
+  flexWrap: "wrap",
+  gap: "15px",
+  marginBottom: "24px",
+  alignItems: "center",
 };
 
 const searchInputStyle = {
-  flex: '1 1 280px', padding: 12, borderRadius: 6, border: '1px solid #ddd', fontSize: 14,
+  width: "100%",
+  flex: "1",
+  minWidth: "260px", padding: 12, borderRadius: 6, border: '1px solid #ddd', fontSize: 14,
 };
 
 const filterSelectStyle = {
-  padding: 12, borderRadius: 6, border: '1px solid #ddd', fontSize: 14, minWidth: 180,
+  padding: 12, borderRadius: 6, border: '1px solid #ddd', fontSize: 14, minWidth: 170,
+  flex: "0 0 180px",
 };
 
 const stateBoxStyle = {
@@ -438,10 +567,15 @@ const spinnerStyle = {
 };
 
 const tableWrapperStyle = {
-  overflowX: 'auto', borderRadius: 10, border: '1px solid #eee', boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+  width: "100%",
+  overflowX: "auto",
+  WebkitOverflowScrolling: "touch",
+  borderRadius: 10,
+  border: "1px solid #eee",
+  boxShadow: "0 2px 8px rgba(0,0,0,.05)",
 };
 
-const tableStyle = { width: '100%', borderCollapse: 'collapse', minWidth: 900, background: '#fff' };
+const tableStyle = { width: '100%', borderCollapse: 'collapse', minWidth: 1000, background: '#fff' };
 
 const thStyle = {
   textAlign: 'left', padding: '14px 16px', background: '#faf6ec', color: '#6b4e16',
@@ -483,11 +617,17 @@ const deleteButtonStyle = {
 const popupOverlay = {
   position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
   background: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center',
-  alignItems: 'center', zIndex: 9999, overflowY: 'auto', padding: 20,
+  alignItems: 'center', zIndex: 9999, overflowY: 'auto', overflowX: 'hidden', padding: 20,
+  boxSizing: 'border-box',
 };
 
 const popupContent = {
-  background: '#fff', padding: 30, borderRadius: 15, maxWidth: 640, width: '100%',
+  background: '#fff', padding: 30, borderRadius: 15, maxWidth: 700,
+  width: "95%",
+  boxSizing: 'border-box',
+  wordBreak: 'break-word',
+  overflowWrap: 'break-word',
+  overflowX: 'hidden',
   position: 'relative', maxHeight: '90vh', overflowY: 'auto',
 };
 
@@ -498,23 +638,82 @@ const closePopupButton = {
 
 const sectionTitleStyle = { color: '#6b4e16', fontSize: 15, marginBottom: 6, marginTop: 20 };
 
-const detailStatusRow = { display: 'flex', alignItems: 'center', gap: 12, margin: '12px 0' };
+const detailStatusRow = { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12, margin: '12px 0' };
 
 const itemsListStyle = {
   borderTop: '1px dashed #ddd', borderBottom: '1px dashed #ddd', padding: '10px 0',
 };
 
 const itemRowStyle = {
-  display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#444', marginBottom: 6,
+  display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'space-between',
+  fontSize: 14, color: '#444', marginBottom: 6, wordBreak: 'break-word',
 };
 
 const detailFooterStyle = {
-  display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: 16, gap: 16,
+  display: "flex",
+  flexWrap: "wrap", justifyContent: 'space-between', alignItems: 'flex-start', marginTop: 16, gap: 16,
 };
 
 const breakdownRowStyle = {
-  display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#555',
-  gap: 24, marginBottom: 2,
+  display: "flex",
+  flexWrap: "wrap",
+  gap: "8px", justifyContent: 'space-between', fontSize: 13, color: '#555', marginBottom: 2,
+};
+
+/* ---------- New styles: mobile card view ---------- */
+
+const cardListStyle = {
+  flexDirection: 'column',
+  gap: 12,
+};
+
+const cardStyle = {
+  background: '#fff',
+  border: '1px solid #eee',
+  borderRadius: 12,
+  padding: 16,
+  boxShadow: '0 2px 8px rgba(0,0,0,.04)',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 10,
+};
+
+const cardTopRowStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+};
+
+const cardCustomerStyle = {
+  borderTop: '1px dashed #eee',
+  paddingTop: 8,
+};
+
+const cardMetaGridStyle = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+  gap: 10,
+  background: "#faf6ec",
+  borderRadius: 8,
+  padding: 10,
+};
+
+const cardMetaLabelStyle = {
+  fontSize: 11,
+  color: '#a67c00',
+  textTransform: 'uppercase',
+  fontWeight: 600,
+  marginBottom: 2,
+};
+
+const cardMetaValueStyle = {
+  fontSize: 14,
+  color: '#333',
+};
+
+const cardActionsStyle = {
+  display: 'flex',
+  gap: 8,
 };
 
 export default ManageOrders;

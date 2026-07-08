@@ -160,7 +160,7 @@ const ManageProducts = () => {
   };
 
   return (
-    <div style={{ padding: 40 }}>
+    <div style={{ padding: '40px', boxSizing: 'border-box', maxWidth: '100%', overflowX: 'hidden' }}>
       <div style={headerStyle}>
         <h1>Manage Products</h1>
         <button onClick={toggleForm} style={topButtonStyle}>
@@ -336,11 +336,17 @@ const ManageProducts = () => {
       <div style={cardGridStyle}>
         {products.map((p, i) => (
           <div key={i} style={cardStyle}>
-            {p.media[0]?.type === "image" ? (
-              <img src={p.media[0].url} alt="img" onClick={() => setSelectedProduct(p)} style={cardImageStyle} />
-            ) : (
-              <video src={p.media[0].url} onClick={() => setSelectedProduct(p)} style={cardImageStyle} muted autoPlay loop />
-            )}
+           {p.media?.length > 0 ? (
+  p.media[0].type === "image" ? (
+    <img src={p.media[0].url} alt={p.name} onClick={() => setSelectedProduct(p)} style={cardImageStyle} />
+  ) : (
+    <video src={p.media[0].url} onClick={() => setSelectedProduct(p)} style={cardImageStyle} muted autoPlay loop />
+  )
+) : (
+  <div style={{ ...cardImageStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f0f0', color: '#999' }}>
+    No Media
+  </div>
+)}
             <h4>{p.name}</h4>
             <div style={{ display: 'flex' }}>
               <button style={editButtonStyle} onClick={() => {
@@ -417,7 +423,7 @@ const renderInput = (label, name, value, onChange) => (
 // ✨ Your inline styles remain unchanged
 const headerStyle = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30, borderBottom: '2px solid #a67c00', paddingBottom: 20 };
 const topButtonStyle = { background: '#a67c00', color: 'white', padding: '12px 24px', borderRadius: 8, border: 'none', fontSize: 16, fontWeight: 'bold', cursor: 'pointer' };
-const dragBoxStyle = { border: '3px dashed #a67c00', padding: 30, marginBottom: 20, textAlign: 'center', borderRadius: 12, backgroundColor: '#fafafa', cursor: 'pointer' };
+const dragBoxStyle = { border: '3px dashed #a67c00', padding: 30, marginBottom: 20, textAlign: 'center', borderRadius: 12, backgroundColor: '#fafafa', cursor: 'pointer', boxSizing: 'border-box' };
 const dragContentStyle = { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 };
 const dragIconStyle = { fontSize: 48, opacity: 0.6 };
 const dragTextStyle = { fontSize: 18, fontWeight: 'bold', color: '#a67c00', margin: 0 };
@@ -428,15 +434,15 @@ const mediaItemStyle = { position: 'relative', display: 'inline-block' };
 const mediaPreviewStyle = { width: 100, height: 100, objectFit: 'cover', borderRadius: 8, border: '2px solid #a67c00' };
 const removeMediaButtonStyle = { position: 'absolute', top: -8, right: -8, background: '#ff4444', color: 'white', border: 'none', borderRadius: '50%', width: 24, height: 24, cursor: 'pointer', fontSize: 16, fontWeight: 'bold' };
 const inputStyle = { width: '100%', padding: 12, marginBottom: 12, borderRadius: 6, border: '1px solid #ddd' };
-const gridStyle = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 15 };
+const gridStyle = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 15 };
 const submitButtonStyle = { background: '#6b4e16', color: '#fff', padding: '12px 24px', border: 'none', borderRadius: 8, marginTop: 20, cursor: 'pointer', fontWeight: 'bold' };
 const cardGridStyle = { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 20, marginTop: 40 };
 const cardStyle = { border: '1px solid #ccc', padding: 16, borderRadius: 10, textAlign: 'center' };
 const cardImageStyle = { width: '100%', height: '180px', objectFit: 'cover', borderRadius: 6, cursor: 'pointer' };
 const editButtonStyle = { flex: 1, marginRight: 5, background: '#795548', color: '#fff', padding: 8, border: 'none', borderRadius: 4, cursor: 'pointer' };
 const deleteButtonStyle = { flex: 1, background: '#c62828', color: '#fff', padding: 8, border: 'none', borderRadius: 4, cursor: 'pointer' };
-const popupOverlay = { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999, overflowY: 'auto', padding: 20 };
-const popupContent = { background: '#fff', padding: 30, borderRadius: 15, maxWidth: 800, width: '100%', position: 'relative', maxHeight: '90vh', overflowY: 'auto' };
+const popupOverlay = { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999, overflowY: 'auto', padding: 20,overflowX: 'hidden', boxSizing: 'border-box' };
+const popupContent = { background: '#fff', padding: 30, borderRadius: 15, maxWidth: 800, width: '100%', boxSizing: 'border-box', wordBreak: 'break-word', overflowWrap: 'break-word', position: 'relative', maxHeight: '90vh', overflowY: 'auto' };
 const closePopupButton = { position: 'absolute', top: 15, right: 20, background: 'transparent', border: 'none', fontSize: 30, cursor: 'pointer', color: '#444' };
 const popupMediaStyle = { width: 160, height: 160, objectFit: 'cover', borderRadius: 8, marginRight: 10 };
 

@@ -108,39 +108,58 @@ export const getOrderById = async (req, res) => {
   }
 };
 
-// Admin: update an order's status (pending -> confirmed -> processing -> shipped -> delivered)
 export const updateOrderStatus = async (req, res) => {
   try {
     const { orderStatus } = req.body;
-    const validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
+
+    const validStatuses = [
+      "pending",
+      "confirmed",
+      "processing",
+      "shipped",
+      "delivered",
+      "cancelled",
+    ];
 
     if (!validStatuses.includes(orderStatus)) {
-      return res.status(400).json({ message: 'Invalid order status' });
+      return res.status(400).json({
+        message: "Invalid order status",
+      });
     }
+
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        message: "Order not found",
+      });
+    }
+
     if (
-    order.orderStatus === "delivered" &&
-    orderStatus === "cancelled"
-) {
-    return res.status(400).json({
-        message: "Delivered orders cannot be cancelled."
-    });
-}
+      order.orderStatus === "delivered" &&
+      orderStatus === "cancelled"
+    ) {
+      return res.status(400).json({
+        message: "Delivered orders cannot be cancelled.",
+      });
+    }
 
-    const order = await Order.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: { orderStatus },
-        $push: { statusHistory: { status: orderStatus } },
-      },
-      { new: true }
-    ).populate('user', 'name email');
+    order.orderStatus = orderStatus;
+    order.statusHistory.push({ status: orderStatus });
 
-    if (!order) return res.status(404).json({ message: 'Order not found' });
+    await order.save();
+
+    await order.populate("user", "name email");
 
     res.json(order);
+
   } catch (err) {
-    console.error('Error updating order status:', err);
-    res.status(500).json({ message: 'Failed to update order', error: err.message });
+    console.error("Error updating order status:", err);
+
+    res.status(500).json({
+      message: "Failed to update order",
+      error: err.message,
+    });
   }
 };
 
