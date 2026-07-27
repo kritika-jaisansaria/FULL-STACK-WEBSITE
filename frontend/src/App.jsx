@@ -32,7 +32,7 @@ import AdminHome from './Pages/admin/adminHome';
 import AdminDashboard from "./Pages/admin/AdminDashboard";
 import AdminUsers from "./Pages/admin/AdminUsers";
 import AdminProducts from './Pages/admin/AdminProducts';
-import AdminOrders from './Pages/admin/AdminOrders';
+import AdminOrders from "./Pages/admin/adminOrders";
 
 /* ================= ROUTES WITH MODAL SUPPORT ================= */
 
@@ -54,7 +54,7 @@ function AppRoutes() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/all-jewellery" element={<AllJewellery />} />
           <Route path="/:category" element={<AllJewellery />} />
-           <Route path="/:category/:style" element={<AllJewellery />} />
+          <Route path="/:category/:style" element={<AllJewellery />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/account" element={<Account />} />
@@ -62,13 +62,13 @@ function AppRoutes() {
           <Route path="/checkout/address" element={<CheckoutAddress />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/order-success" element={<OrderSuccess />} />
-         
+
         </Route>
 
         {/* ADMIN ROUTES */}
         <Route path="/admin" element={<AdminHome />}>
-        <Route index element={<AdminDashboard />} />
-<Route path="users" element={<AdminUsers />} />
+          <Route index element={<AdminDashboard />} />
+          <Route path="users" element={<AdminUsers />} />
           <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrders />} />
         </Route>
