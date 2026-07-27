@@ -10,7 +10,7 @@ const Recommendations = () => {
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    const url = `http://localhost:8080/api/products/recommended/${id}`;
+    const url = `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/products/recommended/${id}`;
     console.log("🔍 Fetching recommendations from:", url);
 
     axios.get(url)
@@ -36,7 +36,7 @@ const Recommendations = () => {
 
   return (
     <div style={{ marginTop: '60px', padding: '0 20px' }}>
-      
+
       {/* Heading and Scroll Arrows in One Row */}
       <div style={{
         display: 'flex',

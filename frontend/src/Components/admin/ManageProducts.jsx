@@ -17,7 +17,7 @@ const ManageProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/products");
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/products`);
         setProducts(res.data);
       } catch (error) {
         toast.error("Failed to fetch products.");
@@ -97,7 +97,7 @@ const ManageProducts = () => {
   };
 
   const handleSubmit = async () => {
-    const { name, price, description, media} = product;
+    const { name, price, description, media } = product;
 
     if (!name || !price || !description || media.length === 0) {
       return toast.error("Please fill name, price, description and upload at least one media file.");
@@ -118,12 +118,12 @@ const ManageProducts = () => {
       const authHeaders = { headers: { Authorization: `Bearer ${userInfo?.token}` } };
 
       if (editingId) {
-        const res = await axios.put(`http://localhost:8080/api/products/${editingId}`, submitProduct, authHeaders);
+        const res = await axios.put(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/products/${editingId}`, submitProduct, authHeaders);
         const updated = products.map(p => (p._id === editingId ? res.data : p));
         setProducts(updated);
         toast.success("Product updated!");
       } else {
-        const res = await axios.post("http://localhost:8080/api/products", submitProduct, authHeaders);
+        const res = await axios.post("${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/products", submitProduct, authHeaders);
         setProducts([...products, res.data]);
         toast.success("Product added!");
       }
@@ -141,7 +141,7 @@ const ManageProducts = () => {
     const productToDelete = products[index];
     try {
       const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-      await axios.delete(`http://localhost:8080/api/products/${productToDelete._id}`, {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/products/${productToDelete._id}`, {
         headers: { Authorization: `Bearer ${userInfo?.token}` },
       });
       const updated = [...products];
@@ -206,66 +206,66 @@ const ManageProducts = () => {
 
             {/* Category Dropdown */}
             <h3>Category</h3>
-<select
-  name="category"
-  value={product.category || ""}
-  onChange={handleChange}
-  style={inputStyle}
->
-  <option value="">Select Category</option>
-  <option value="solitaire">Solitaire</option>
-  <option value="rings">Rings</option>
-  <option value="pendant">Pendant</option>
-  <option value="bracelet">Bracelet</option>
-  <option value="mangalsutra_bracelet">Mangalsutra Bracelet</option>
-  <option value="nosepin">Nosepin</option>
-  <option value="watchpin">Watchpin</option>
-  <option value="chain">Chain</option>
-  <option value="rakhi_pendant">Rakhi Pendant</option>
-  <option value="earrings">Earrings</option>
-  <option value="bangles">Bangles</option>
-  <option value="mangalsutra">Mangalsutra</option>
-  <option value="necklace">Necklace</option>
-  <option value="watch_charm">Watch Charm</option>
-  <option value="souvenir">Souvenir</option>
-</select>
+            <select
+              name="category"
+              value={product.category || ""}
+              onChange={handleChange}
+              style={inputStyle}
+            >
+              <option value="">Select Category</option>
+              <option value="solitaire">Solitaire</option>
+              <option value="rings">Rings</option>
+              <option value="pendant">Pendant</option>
+              <option value="bracelet">Bracelet</option>
+              <option value="mangalsutra_bracelet">Mangalsutra Bracelet</option>
+              <option value="nosepin">Nosepin</option>
+              <option value="watchpin">Watchpin</option>
+              <option value="chain">Chain</option>
+              <option value="rakhi_pendant">Rakhi Pendant</option>
+              <option value="earrings">Earrings</option>
+              <option value="bangles">Bangles</option>
+              <option value="mangalsutra">Mangalsutra</option>
+              <option value="necklace">Necklace</option>
+              <option value="watch_charm">Watch Charm</option>
+              <option value="souvenir">Souvenir</option>
+            </select>
 
-<h3>Style</h3>
-<select name="style" value={product.style || ""} onChange={handleChange} style={inputStyle}>
-  <option value="">Select Style</option>
+            <h3>Style</h3>
+            <select name="style" value={product.style || ""} onChange={handleChange} style={inputStyle}>
+              <option value="">Select Style</option>
 
-  {/* Earrings Styles */}
-  {product.category === "earrings" && (
-    <>
-      <option value="chandelier">Chandelier</option>
-      <option value="front_back">Front Back</option>
-      <option value="sui_dhaga">Sui Dhaga</option>
-      <option value="studs">Studs</option>
-      <option value="floral">Floral</option>
-      <option value="drops">Drops</option>
-      <option value="jhumkas">Jhumkas</option>
-      <option value="danglers">Danglers</option>
-      <option value="hoops_huggies">Hoops & Huggies</option>
-      <option value="hearts">Hearts</option>
-      <option value="fashion">Fashion</option>
-    </>
-  )}
+              {/* Earrings Styles */}
+              {product.category === "earrings" && (
+                <>
+                  <option value="chandelier">Chandelier</option>
+                  <option value="front_back">Front Back</option>
+                  <option value="sui_dhaga">Sui Dhaga</option>
+                  <option value="studs">Studs</option>
+                  <option value="floral">Floral</option>
+                  <option value="drops">Drops</option>
+                  <option value="jhumkas">Jhumkas</option>
+                  <option value="danglers">Danglers</option>
+                  <option value="hoops_huggies">Hoops & Huggies</option>
+                  <option value="hearts">Hearts</option>
+                  <option value="fashion">Fashion</option>
+                </>
+              )}
 
-  {/* Rings Styles */}
-  {product.category === "rings" && (
-    <>
-      <option value="dailywear">Dailywear</option>
-      <option value="cocktail">Cocktail</option>
-      <option value="bands">Bands</option>
-      <option value="floral">Floral</option>
-      <option value="adjustable">Adjustable</option>
-      <option value="couple_bands">Couple Bands</option>
-      <option value="engagement">Engagement</option>
-      <option value="infinity">Infinity</option>
-      <option value="fashion">Fashion</option>
-    </>
-  )}
-</select>
+              {/* Rings Styles */}
+              {product.category === "rings" && (
+                <>
+                  <option value="dailywear">Dailywear</option>
+                  <option value="cocktail">Cocktail</option>
+                  <option value="bands">Bands</option>
+                  <option value="floral">Floral</option>
+                  <option value="adjustable">Adjustable</option>
+                  <option value="couple_bands">Couple Bands</option>
+                  <option value="engagement">Engagement</option>
+                  <option value="infinity">Infinity</option>
+                  <option value="fashion">Fashion</option>
+                </>
+              )}
+            </select>
 
             <h3>Metal Details</h3>
             <div style={gridStyle}>
@@ -284,27 +284,27 @@ const ManageProducts = () => {
               {renderInput("Brand", "brand", product.generalDetails.brand, handleGeneralChange)}
 
               <select name="collection" value={product.generalDetails.collection} onChange={handleGeneralChange} style={inputStyle}>
-  <option value="">Select Collection</option>
-  <option value="festive">Festive</option>
-  <option value="bestseller">Bestseller</option>
-  <option value="new_arrivals">New Arrivals</option>
-  <option value="bridal">Bridal</option>
-  <option value="everyday">Everyday</option>
-  <option value="echo">Echo</option>
-  <option value="akshaya">Akshaya</option>
-  <option value="charms">Charms</option>
-  <option value="evil-eye">Evil Eye</option>
-  <option value="ti-amo">Ti Amo</option>
-  <option value="tanishta">Tanishta</option>
-  <option value="parineeta">Parineeta</option>
-  <option value="tiny-tale">Tiny Tale</option>
-  <option value="letter-of-love">Letter Of Love</option>
-  <option value="orla">Orla</option>
-  <option value="tisha">Tisha</option>
-  <option value="aranka">Aranka</option>
-  <option value="uphaar">Uphaar</option>
-  <option value="panache">Panache</option>
-</select>
+                <option value="">Select Collection</option>
+                <option value="festive">Festive</option>
+                <option value="bestseller">Bestseller</option>
+                <option value="new_arrivals">New Arrivals</option>
+                <option value="bridal">Bridal</option>
+                <option value="everyday">Everyday</option>
+                <option value="echo">Echo</option>
+                <option value="akshaya">Akshaya</option>
+                <option value="charms">Charms</option>
+                <option value="evil-eye">Evil Eye</option>
+                <option value="ti-amo">Ti Amo</option>
+                <option value="tanishta">Tanishta</option>
+                <option value="parineeta">Parineeta</option>
+                <option value="tiny-tale">Tiny Tale</option>
+                <option value="letter-of-love">Letter Of Love</option>
+                <option value="orla">Orla</option>
+                <option value="tisha">Tisha</option>
+                <option value="aranka">Aranka</option>
+                <option value="uphaar">Uphaar</option>
+                <option value="panache">Panache</option>
+              </select>
 
               <select name="gender" value={product.generalDetails.gender} onChange={handleGeneralChange} style={inputStyle}>
                 <option value="">Select Gender</option>
@@ -336,17 +336,17 @@ const ManageProducts = () => {
       <div style={cardGridStyle}>
         {products.map((p, i) => (
           <div key={i} style={cardStyle}>
-           {p.media?.length > 0 ? (
-  p.media[0].type === "image" ? (
-    <img src={p.media[0].url} alt={p.name} onClick={() => setSelectedProduct(p)} style={cardImageStyle} />
-  ) : (
-    <video src={p.media[0].url} onClick={() => setSelectedProduct(p)} style={cardImageStyle} muted autoPlay loop />
-  )
-) : (
-  <div style={{ ...cardImageStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f0f0', color: '#999' }}>
-    No Media
-  </div>
-)}
+            {p.media?.length > 0 ? (
+              p.media[0].type === "image" ? (
+                <img src={p.media[0].url} alt={p.name} onClick={() => setSelectedProduct(p)} style={cardImageStyle} />
+              ) : (
+                <video src={p.media[0].url} onClick={() => setSelectedProduct(p)} style={cardImageStyle} muted autoPlay loop />
+              )
+            ) : (
+              <div style={{ ...cardImageStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f0f0', color: '#999' }}>
+                No Media
+              </div>
+            )}
             <h4>{p.name}</h4>
             <div style={{ display: 'flex' }}>
               <button style={editButtonStyle} onClick={() => {
@@ -441,7 +441,7 @@ const cardStyle = { border: '1px solid #ccc', padding: 16, borderRadius: 10, tex
 const cardImageStyle = { width: '100%', height: '180px', objectFit: 'cover', borderRadius: 6, cursor: 'pointer' };
 const editButtonStyle = { flex: 1, marginRight: 5, background: '#795548', color: '#fff', padding: 8, border: 'none', borderRadius: 4, cursor: 'pointer' };
 const deleteButtonStyle = { flex: 1, background: '#c62828', color: '#fff', padding: 8, border: 'none', borderRadius: 4, cursor: 'pointer' };
-const popupOverlay = { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999, overflowY: 'auto', padding: 20,overflowX: 'hidden', boxSizing: 'border-box' };
+const popupOverlay = { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999, overflowY: 'auto', padding: 20, overflowX: 'hidden', boxSizing: 'border-box' };
 const popupContent = { background: '#fff', padding: 30, borderRadius: 15, maxWidth: 800, width: '100%', boxSizing: 'border-box', wordBreak: 'break-word', overflowWrap: 'break-word', position: 'relative', maxHeight: '90vh', overflowY: 'auto' };
 const closePopupButton = { position: 'absolute', top: 15, right: 20, background: 'transparent', border: 'none', fontSize: 30, cursor: 'pointer', color: '#444' };
 const popupMediaStyle = { width: 160, height: 160, objectFit: 'cover', borderRadius: 8, marginRight: 10 };

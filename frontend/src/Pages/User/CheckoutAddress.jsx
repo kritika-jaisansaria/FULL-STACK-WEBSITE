@@ -11,22 +11,22 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react";
-const BASE_URL = 'http://localhost:8080/api/addresses';
+const BASE_URL = `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/addresses`;
 
 
-const EMPTY_ADDRESS = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  mobile: "",
-  addressType: "Home",
-  isDefault: false,
-  address1: "",
-  address2: "",
-  pincode: "",
-  city: "",
-  state: "",
-};
+  const EMPTY_ADDRESS = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    mobile: "",
+    addressType: "Home",
+    isDefault: false,
+    address1: "",
+    address2: "",
+    pincode: "",
+    city: "",
+    state: "",
+  };
 
 const CheckoutAddress = () => {
   const { cartItems } = useCart();
@@ -65,37 +65,37 @@ const CheckoutAddress = () => {
   }, []);
 
   const fetchSavedAddresses = async () => {
-  try {
-    setAddressesLoading(true);
+    try {
+      setAddressesLoading(true);
 
-    const { data } = await axios.get(BASE_URL, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      const { data } = await axios.get(BASE_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    setSavedAddresses(data);
-    const defaultAddress = data.find(addr => addr.isDefault);
+      setSavedAddresses(data);
+      const defaultAddress = data.find(addr => addr.isDefault);
 
-    if (defaultAddress) {
-  setSelectedAddressId(defaultAddress._id);
-  localStorage.setItem(
-    "selectedShippingAddress",
-    JSON.stringify(defaultAddress)
-  );
-}
+      if (defaultAddress) {
+        setSelectedAddressId(defaultAddress._id);
+        localStorage.setItem(
+          "selectedShippingAddress",
+          JSON.stringify(defaultAddress)
+        );
+      }
 
-  } catch (err) {
-    console.error("Failed to fetch addresses", err);
+    } catch (err) {
+      console.error("Failed to fetch addresses", err);
 
-    toast.error(
-      err.response?.data?.message ||
-      "Could not load saved addresses."
-    );
-  } finally {
-    setAddressesLoading(false);
-  }
-};
+      toast.error(
+        err.response?.data?.message ||
+        "Could not load saved addresses."
+      );
+    } finally {
+      setAddressesLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (showPopup) setPopupVisible(true);
@@ -106,39 +106,39 @@ const CheckoutAddress = () => {
   }, [showPopup]);
 
   const isAddressValid = (addr) => {
-  if (
-    !addr.firstName.trim() ||
-    !addr.lastName.trim() ||
-    !addr.email.trim() ||
-    !addr.mobile.trim() ||
-    !addr.address1.trim() ||
-    !addr.city.trim() ||
-    !addr.state.trim() ||
-    !addr.pincode.trim()
-  ) {
-    toast.error("Please fill all required fields.");
-    return false;
-  }
+    if (
+      !addr.firstName.trim() ||
+      !addr.lastName.trim() ||
+      !addr.email.trim() ||
+      !addr.mobile.trim() ||
+      !addr.address1.trim() ||
+      !addr.city.trim() ||
+      !addr.state.trim() ||
+      !addr.pincode.trim()
+    ) {
+      toast.error("Please fill all required fields.");
+      return false;
+    }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (!emailRegex.test(addr.email)) {
-    toast.error("Please enter a valid email address.");
-    return false;
-  }
+    if (!emailRegex.test(addr.email)) {
+      toast.error("Please enter a valid email address.");
+      return false;
+    }
 
-  if (!/^\d{10}$/.test(addr.mobile)) {
-    toast.error("Mobile number must be exactly 10 digits.");
-    return false;
-  }
+    if (!/^\d{10}$/.test(addr.mobile)) {
+      toast.error("Mobile number must be exactly 10 digits.");
+      return false;
+    }
 
-  if (!/^\d{6}$/.test(addr.pincode)) {
-    toast.error("Pincode must be exactly 6 digits.");
-    return false;
-  }
+    if (!/^\d{6}$/.test(addr.pincode)) {
+      toast.error("Pincode must be exactly 6 digits.");
+      return false;
+    }
 
-  return true;
-};
+    return true;
+  };
 
   const handleSubmit = async () => {
     if (!token) return toast.error('You must be logged in');
@@ -147,26 +147,26 @@ const CheckoutAddress = () => {
     try {
       setSubmitting(true);
       if (isEditing) {
-  await axios.put(
-    `${BASE_URL}/${editingAddress._id}`,
-    address,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-} else {
-  await axios.post(
-    BASE_URL,
-    address,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-}
+        await axios.put(
+          `${BASE_URL}/${editingAddress._id}`,
+          address,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } else {
+        await axios.post(
+          BASE_URL,
+          address,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
 
       toast.success(isEditing ? 'Address updated' : 'Address saved');
 
@@ -189,18 +189,18 @@ const CheckoutAddress = () => {
     try {
       setDeletingId(id);
       await axios.delete(`${BASE_URL}/${id}`, {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-});
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setSavedAddresses(prev => prev.filter(a => a._id !== id));
       if (selectedAddressId === id) setSelectedAddressId(null);
       toast.success('Address removed');
     } catch (err) {
       toast.error(
-  err.response?.data?.message ||
-  "Failed to delete address."
-);
+        err.response?.data?.message ||
+        "Failed to delete address."
+      );
       console.error(err);
     } finally {
       setDeletingId(null);
@@ -215,11 +215,11 @@ const CheckoutAddress = () => {
     setSelectedAddressId(addr._id);
     setDeliveringId(addr._id);
     localStorage.setItem(
-  "selectedShippingAddress",
-  JSON.stringify(addr)
-);
+      "selectedShippingAddress",
+      JSON.stringify(addr)
+    );
 
-toast.success("Delivery address selected.");
+    toast.success("Delivery address selected.");
   };
 
   const handleChange = (e) => {
@@ -238,174 +238,174 @@ toast.success("Delivery address selected.");
   const renderAddressForm = (data, onChange) => (
     <>
       <div style={formGroup}><label
-  style={{
-    fontSize: "14px",
-    fontWeight: 600,
-    color: "#555",
-  }}
->
-  First Name *
-</label><input name="firstName" value={data.firstName} onChange={onChange} style={inputStyle} /></div>
-      <div style={formGroup}><label
-  style={{
-    fontSize: "14px",
-    fontWeight: 600,
-    color: "#555",
-  }}
->
-  Last Name *
-</label><input name="lastName" value={data.lastName} onChange={onChange} style={inputStyle} /></div>
-      <div style={formGroup}><label
-  style={{
-    fontSize: "14px",
-    fontWeight: 600,
-    color: "#555",
-  }}
->
-  Email *
-</label><input name="email" value={data.email} onChange={onChange} type="email" style={inputStyle} /></div>
-      <div style={formGroup}><label
-  style={{
-    fontSize: "14px",
-    fontWeight: 600,
-    color: "#555",
-  }}
->
-  Mobile *
-</label><input name="mobile" value={data.mobile} onChange={onChange} type="tel" style={inputStyle} /></div>
-<div style={formGroup}>
-  <label
-    style={{
-      fontSize: "14px",
-      fontWeight: 600,
-      color: "#555",
-    }}
-  >
-    Address Type
-  </label>
-
-  <div
-    style={{
-      display: "flex",
-      gap: "10px",
-      marginTop: "4px",
-    }}
-  >
-    {["Home", "Office", "Other"].map((type) => (
-      <button
-        key={type}
-        type="button"
-        onClick={() =>
-          setAddress((prev) => ({
-            ...prev,
-            addressType: type,
-          }))
-        }
         style={{
-          padding: "8px 18px",
-          borderRadius: "20px",
-          border:
-            data.addressType === type
-              ? "2px solid #7b2424"
-              : "1px solid #ddd",
-          background:
-            data.addressType === type ? "#7b2424" : "#fff",
-          color:
-            data.addressType === type ? "#fff" : "#555",
+          fontSize: "14px",
           fontWeight: 600,
-          cursor: "pointer",
-          transition: "0.25s",
+          color: "#555",
         }}
       >
-        {type}
-      </button>
-    ))}
-  </div>
-</div>
-
-<div
-  style={{
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    marginBottom: "18px",
-  }}
->
-  <input
-    type="checkbox"
-    id="defaultAddress"
-    checked={data.isDefault}
-    onChange={(e) =>
-      setAddress((prev) => ({
-        ...prev,
-        isDefault: e.target.checked,
-      }))
-    }
-    style={{
-      width: "16px",
-      height: "16px",
-      cursor: "pointer",
-    }}
-  />
-
-  <label
-    htmlFor="defaultAddress"
-    style={{
-      fontSize: "14px",
-      color: "#555",
-      cursor: "pointer",
-      userSelect: "none",
-    }}
-  >
-    Set as my default delivery address
-  </label>
-</div>
+        First Name *
+      </label><input name="firstName" value={data.firstName} onChange={onChange} style={inputStyle} /></div>
       <div style={formGroup}><label
-  style={{
-    fontSize: "14px",
-    fontWeight: 600,
-    color: "#555",
-  }}
->
-  Address Line 1 *
-</label><input name="address1" value={data.address1} onChange={onChange} style={inputStyle} /></div>
+        style={{
+          fontSize: "14px",
+          fontWeight: 600,
+          color: "#555",
+        }}
+      >
+        Last Name *
+      </label><input name="lastName" value={data.lastName} onChange={onChange} style={inputStyle} /></div>
       <div style={formGroup}><label
-  style={{
-    fontSize: "14px",
-    fontWeight: 600,
-    color: "#555",
-  }}
->
-  Address Line 2
-</label><input name="address2" value={data.address2} onChange={onChange} style={inputStyle} /></div>
+        style={{
+          fontSize: "14px",
+          fontWeight: 600,
+          color: "#555",
+        }}
+      >
+        Email *
+      </label><input name="email" value={data.email} onChange={onChange} type="email" style={inputStyle} /></div>
+      <div style={formGroup}><label
+        style={{
+          fontSize: "14px",
+          fontWeight: 600,
+          color: "#555",
+        }}
+      >
+        Mobile *
+      </label><input name="mobile" value={data.mobile} onChange={onChange} type="tel" style={inputStyle} /></div>
+      <div style={formGroup}>
+        <label
+          style={{
+            fontSize: "14px",
+            fontWeight: 600,
+            color: "#555",
+          }}
+        >
+          Address Type
+        </label>
+
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+            marginTop: "4px",
+          }}
+        >
+          {["Home", "Office", "Other"].map((type) => (
+            <button
+              key={type}
+              type="button"
+              onClick={() =>
+                setAddress((prev) => ({
+                  ...prev,
+                  addressType: type,
+                }))
+              }
+              style={{
+                padding: "8px 18px",
+                borderRadius: "20px",
+                border:
+                  data.addressType === type
+                    ? "2px solid #7b2424"
+                    : "1px solid #ddd",
+                background:
+                  data.addressType === type ? "#7b2424" : "#fff",
+                color:
+                  data.addressType === type ? "#fff" : "#555",
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "0.25s",
+              }}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          marginBottom: "18px",
+        }}
+      >
+        <input
+          type="checkbox"
+          id="defaultAddress"
+          checked={data.isDefault}
+          onChange={(e) =>
+            setAddress((prev) => ({
+              ...prev,
+              isDefault: e.target.checked,
+            }))
+          }
+          style={{
+            width: "16px",
+            height: "16px",
+            cursor: "pointer",
+          }}
+        />
+
+        <label
+          htmlFor="defaultAddress"
+          style={{
+            fontSize: "14px",
+            color: "#555",
+            cursor: "pointer",
+            userSelect: "none",
+          }}
+        >
+          Set as my default delivery address
+        </label>
+      </div>
+      <div style={formGroup}><label
+        style={{
+          fontSize: "14px",
+          fontWeight: 600,
+          color: "#555",
+        }}
+      >
+        Address Line 1 *
+      </label><input name="address1" value={data.address1} onChange={onChange} style={inputStyle} /></div>
+      <div style={formGroup}><label
+        style={{
+          fontSize: "14px",
+          fontWeight: 600,
+          color: "#555",
+        }}
+      >
+        Address Line 2
+      </label><input name="address2" value={data.address2} onChange={onChange} style={inputStyle} /></div>
       <div style={rowInputContainerStyle} className="checkout-address-row-inputs">
         <div style={pincodeStyle}><label
-  style={{
-    fontSize: "14px",
-    fontWeight: 600,
-    color: "#555",
-  }}
->
-  Pincode *
-</label><input name="pincode" value={data.pincode} onChange={onChange} style={inputStyle} /></div>
+          style={{
+            fontSize: "14px",
+            fontWeight: 600,
+            color: "#555",
+          }}
+        >
+          Pincode *
+        </label><input name="pincode" value={data.pincode} onChange={onChange} style={inputStyle} /></div>
         <div style={cityStyle}><label
-  style={{
-    fontSize: "14px",
-    fontWeight: 600,
-    color: "#555",
-  }}
->
-  City *
-</label><input name="city" value={data.city} onChange={onChange} style={inputStyle} /></div>
+          style={{
+            fontSize: "14px",
+            fontWeight: 600,
+            color: "#555",
+          }}
+        >
+          City *
+        </label><input name="city" value={data.city} onChange={onChange} style={inputStyle} /></div>
         <div style={stateStyle}><label
-  style={{
-    fontSize: "14px",
-    fontWeight: 600,
-    color: "#555",
-  }}
->
-  State *
-</label><input name="state" value={data.state} onChange={onChange} style={inputStyle} /></div>
+          style={{
+            fontSize: "14px",
+            fontWeight: 600,
+            color: "#555",
+          }}
+        >
+          State *
+        </label><input name="state" value={data.state} onChange={onChange} style={inputStyle} /></div>
       </div>
     </>
   );
@@ -452,250 +452,250 @@ toast.success("Delivery address selected.");
               {savedAddresses.map(addr => {
                 const isBusy = deletingId === addr._id || deliveringId === addr._id;
                 return (
-                 <div
-  key={addr._id}
-  style={getCardStyle(addr._id)}
-  onMouseEnter={(e) => {
-    if (selectedAddressId !== addr._id) {
-      e.currentTarget.style.transform = "translateY(-3px)";
-      e.currentTarget.style.boxShadow =
-        "0 10px 24px rgba(123,36,36,0.12)";
-    }
-  }}
-  onMouseLeave={(e) => {
-    if (selectedAddressId !== addr._id) {
-      e.currentTarget.style.transform = "translateY(0)";
-      e.currentTarget.style.boxShadow =
-        "0 4px 18px rgba(0,0,0,0.06)";
-    }
-  }}
+                  <div
+                    key={addr._id}
+                    style={getCardStyle(addr._id)}
+                    onMouseEnter={(e) => {
+                      if (selectedAddressId !== addr._id) {
+                        e.currentTarget.style.transform = "translateY(-3px)";
+                        e.currentTarget.style.boxShadow =
+                          "0 10px 24px rgba(123,36,36,0.12)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (selectedAddressId !== addr._id) {
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.boxShadow =
+                          "0 4px 18px rgba(0,0,0,0.06)";
+                      }
+                    }}
                     onClick={() => setSelectedAddressId(addr._id)}
                   >
                     <div
-  style={{
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "10px",
-  }}
->
-  <span
-    style={{
-      background: "#f7efe0",
-      color: "#7b2424",
-      padding: "4px 12px",
-      borderRadius: "20px",
-      fontSize: "12px",
-      fontWeight: 600,
-    }}
-  >
-    {addr.addressType || "Home"}
-  </span>
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <span
+                        style={{
+                          background: "#f7efe0",
+                          color: "#7b2424",
+                          padding: "4px 12px",
+                          borderRadius: "20px",
+                          fontSize: "12px",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {addr.addressType || "Home"}
+                      </span>
 
-  {addr.isDefault && (
-    <span
-      style={{
-        background:
-  selectedAddressId === addr._id
-    ? "#2e7d32"
-    : "#7b2424",
-        color: "#fff",
-        padding: "4px 12px",
-        borderRadius: "20px",
-        fontSize: "12px",
-        fontWeight: 600,
-      }}
-    >
-      Default
-    </span>
-  )}
-</div>
+                      {addr.isDefault && (
+                        <span
+                          style={{
+                            background:
+                              selectedAddressId === addr._id
+                                ? "#2e7d32"
+                                : "#7b2424",
+                            color: "#fff",
+                            padding: "4px 12px",
+                            borderRadius: "20px",
+                            fontSize: "12px",
+                            fontWeight: 600,
+                          }}
+                        >
+                          Default
+                        </span>
+                      )}
+                    </div>
 
-<p
-  style={{
-    fontWeight: 700,
-    fontSize: "18px",
-    marginBottom: "8px",
-  }}
->
-  {addr.firstName} {addr.lastName}
-</p>
-                <div
-  style={{
-    display: "flex",
-    alignItems: "flex-start",
-    gap: "8px",
-    marginTop: "10px",
-    lineHeight: "1.6",
-    color: "#444",
-    fontSize: "15px",
-  }}
->
-  <MapPin
-    size={18}
-    color="#7b2424"
-    style={{ marginTop: "2px", flexShrink: 0 }}
-  />
-
-  <div>
-    {addr.address1}
-    {addr.address2 && (
-      <>
-        <br />
-        {addr.address2}
-      </>
-    )}
-    <br />
-    {addr.city}, {addr.state} - {addr.pincode}
-  </div>
-</div>
+                    <p
+                      style={{
+                        fontWeight: 700,
+                        fontSize: "18px",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      {addr.firstName} {addr.lastName}
+                    </p>
                     <div
-  style={{
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    marginTop: "8px",
-    color: "#555",
-    fontSize: "14px",
-  }}
->
-  <Phone size={16} color="#7b2424" />
-  {addr.mobile}
-</div>
-                    <div
-  style={{
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    marginTop: "6px",
-    color: "#555",
-    fontSize: "14px",
-  }}
->
-  <Mail size={16} color="#7b2424" />
-  {addr.email}
-</div>
-                    <div
-  style={{
-    display: "flex",
-    gap: "10px",
-    marginTop: "18px",
-    flexWrap: "wrap",
-  }}
->
-  <button
-   disabled={isBusy || selectedAddressId === addr._id}
-    onClick={(e) => {
-      e.stopPropagation();
-      handleDeliverHere(addr);
-    }}
-    style={{
-      background: "#7b2424",
-      color: "#fff",
-      border: "none",
-      borderRadius: "8px",
-      padding: "10px 18px",
-      fontWeight: 600,
-      cursor:
-  isBusy || selectedAddressId === addr._id
-    ? "not-allowed"
-    : "pointer",
-      transition: "0.25s",
-    }}
-  >
-    {
-       selectedAddressId === addr._id
-      ? "Selected"
-      : deliveringId === addr._id
-      ? "Please wait..."
-      : "Deliver Here"
-    }
-  </button>
+                      style={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: "8px",
+                        marginTop: "10px",
+                        lineHeight: "1.6",
+                        color: "#444",
+                        fontSize: "15px",
+                      }}
+                    >
+                      <MapPin
+                        size={18}
+                        color="#7b2424"
+                        style={{ marginTop: "2px", flexShrink: 0 }}
+                      />
 
-  <button
-    disabled={isBusy}
-    onClick={(e) => {
-      e.stopPropagation();
-      setEditingAddress(addr);
-      setAddress({ ...EMPTY_ADDRESS, ...addr });
-      setIsEditing(true);
-      setShowPopup(true);
-    }}
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: "6px",
-      background: "#fff",
-      border: "1px solid #ddd",
-      borderRadius: "8px",
-      padding: "10px 14px",
-      cursor: "pointer",
-      fontWeight: 500,
-    }}
-  >
-    <Pencil size={16} />
-    Edit
-  </button>
+                      <div>
+                        {addr.address1}
+                        {addr.address2 && (
+                          <>
+                            <br />
+                            {addr.address2}
+                          </>
+                        )}
+                        <br />
+                        {addr.city}, {addr.state} - {addr.pincode}
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        marginTop: "8px",
+                        color: "#555",
+                        fontSize: "14px",
+                      }}
+                    >
+                      <Phone size={16} color="#7b2424" />
+                      {addr.mobile}
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        marginTop: "6px",
+                        color: "#555",
+                        fontSize: "14px",
+                      }}
+                    >
+                      <Mail size={16} color="#7b2424" />
+                      {addr.email}
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "10px",
+                        marginTop: "18px",
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      <button
+                        disabled={isBusy || selectedAddressId === addr._id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeliverHere(addr);
+                        }}
+                        style={{
+                          background: "#7b2424",
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: "8px",
+                          padding: "10px 18px",
+                          fontWeight: 600,
+                          cursor:
+                            isBusy || selectedAddressId === addr._id
+                              ? "not-allowed"
+                              : "pointer",
+                          transition: "0.25s",
+                        }}
+                      >
+                        {
+                          selectedAddressId === addr._id
+                            ? "Selected"
+                            : deliveringId === addr._id
+                              ? "Please wait..."
+                              : "Deliver Here"
+                        }
+                      </button>
 
-  <button
-    disabled={isBusy}
-    onClick={(e) => {
-      e.stopPropagation();
-      handleDeleteAddress(addr._id);
-    }}
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: "6px",
-      background: "#fff",
-      border: "1px solid #e5b5b5",
-      color: "#b00020",
-      borderRadius: "8px",
-      padding: "10px 14px",
-      cursor: "pointer",
-      fontWeight: 500,
-    }}
-  >
-    <Trash2 size={16} />
-    {deletingId === addr._id ? "Removing..." : "Delete"}
-  </button>
-</div>
-                  {selectedAddressId === addr._id && (
-  <div
-    style={{
-      marginTop: "14px",
-      display: "inline-flex",
-      alignItems: "center",
-      gap: "6px",
-      background: "#e8f5e9",
-      color: "#2e7d32",
-      padding: "6px 12px",
-      borderRadius: "20px",
-      fontSize: "13px",
-      fontWeight: 600,
-      border: "1px solid #c8e6c9",
-    }}
-  >
-    ✓ Selected for Delivery
-  </div>
-)} 
+                      <button
+                        disabled={isBusy}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingAddress(addr);
+                          setAddress({ ...EMPTY_ADDRESS, ...addr });
+                          setIsEditing(true);
+                          setShowPopup(true);
+                        }}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          background: "#fff",
+                          border: "1px solid #ddd",
+                          borderRadius: "8px",
+                          padding: "10px 14px",
+                          cursor: "pointer",
+                          fontWeight: 500,
+                        }}
+                      >
+                        <Pencil size={16} />
+                        Edit
+                      </button>
+
+                      <button
+                        disabled={isBusy}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteAddress(addr._id);
+                        }}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          background: "#fff",
+                          border: "1px solid #e5b5b5",
+                          color: "#b00020",
+                          borderRadius: "8px",
+                          padding: "10px 14px",
+                          cursor: "pointer",
+                          fontWeight: 500,
+                        }}
+                      >
+                        <Trash2 size={16} />
+                        {deletingId === addr._id ? "Removing..." : "Delete"}
+                      </button>
+                    </div>
+                    {selectedAddressId === addr._id && (
+                      <div
+                        style={{
+                          marginTop: "14px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          background: "#e8f5e9",
+                          color: "#2e7d32",
+                          padding: "6px 12px",
+                          borderRadius: "20px",
+                          fontSize: "13px",
+                          fontWeight: 600,
+                          border: "1px solid #c8e6c9",
+                        }}
+                      >
+                        ✓ Selected for Delivery
+                      </div>
+                    )}
                   </div>
                 );
               })}
 
               {savedAddresses.length < 3 && (
                 <div
-    onClick={() => setShowPopup(true)}
-    style={addAddressBoxStyle}
-    onMouseEnter={(e)=>{
-        e.currentTarget.style.transform="translateY(-3px)";
-        e.currentTarget.style.boxShadow="0 12px 24px rgba(184,134,11,0.12)";
-    }}
-    onMouseLeave={(e)=>{
-        e.currentTarget.style.transform="translateY(0)";
-        e.currentTarget.style.boxShadow="none";
-    }}
->
+                  onClick={() => setShowPopup(true)}
+                  style={addAddressBoxStyle}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-3px)";
+                    e.currentTarget.style.boxShadow = "0 12px 24px rgba(184,134,11,0.12)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                >
                   <div style={plusCircleStyle}>+</div>
                   <p style={addText}>Add Address</p>
                 </div>
@@ -704,78 +704,78 @@ toast.success("Delivery address selected.");
           )}
         </div>
 
-      <div style={{ flex: 1 }}>
-        <CheckoutSteps currentStep={2} />
-        <div>
-          {cartItems.map((item) => (
-            <div key={item._id} style={{ display: 'flex', marginBottom: '1rem' }}>
-              <img src={item.product.media[0].url} alt={item.product.name} style={{ width: 50, height: 50, borderRadius: 8 }} />
-              <div style={{ marginLeft: '1rem' }}>
-                <div style={{ fontWeight: 700 }}>{item.product.name}</div>
-                <div>Quantity: {item.quantity}</div>
-                <div style={{ color: '#7b2424', fontWeight: 700 }}>₹{item.product.price}</div>
+        <div style={{ flex: 1 }}>
+          <CheckoutSteps currentStep={2} />
+          <div>
+            {cartItems.map((item) => (
+              <div key={item._id} style={{ display: 'flex', marginBottom: '1rem' }}>
+                <img src={item.product.media[0].url} alt={item.product.name} style={{ width: 50, height: 50, borderRadius: 8 }} />
+                <div style={{ marginLeft: '1rem' }}>
+                  <div style={{ fontWeight: 700 }}>{item.product.name}</div>
+                  <div>Quantity: {item.quantity}</div>
+                  <div style={{ color: '#7b2424', fontWeight: 700 }}>₹{item.product.price}</div>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-        <div style={{ marginTop: '1.5rem', borderTop: '1px solid #ddd', paddingTop: '1rem' }}>
-          <div style={rowStyle}><span>Subtotal</span><span>₹{subtotal}</span></div>
-          <div style={rowStyle}><span>Shipping</span><span>Free</span></div>
-          <div style={{ ...rowStyle, fontWeight: 700, fontSize: '18px' }}><span>Total</span><span>₹{subtotal}</span></div>
-          <button
-            onClick={() => {
-              const selected = savedAddresses.find(a => a._id === selectedAddressId);
-              if (!selected) return toast.error("Please select a shipping address to continue.");
-              localStorage.setItem('selectedShippingAddress', JSON.stringify(selected));
-              if (subtotal <= 0) {
-  toast.error("Your cart is empty.");
-  return;
-}
-              navigate('/payment');
-            }}
-            style={proceedButtonStyle}
-          >
-            Proceed to Payment
-          </button>
-        </div>
-      </div>
-
-      {popupVisible && (
-        <div style={{ ...popupOverlayStyle, opacity: showPopup ? 1 : 0 }} onClick={() => setShowPopup(false)}>
-          <div style={{ ...popupCardStyle, ...popupCardAnimatedStyle(showPopup) }} onClick={(e) => e.stopPropagation()}>
-            <>
-  <h2
-    style={{
-      color: "#7b2424",
-      fontWeight: 700,
-      marginBottom: "10px",
-    }}
-  >
-    {isEditing ? "Edit Address" : "Add New Address"}
-  </h2>
-
-  <div
-    style={{
-      width: "60px",
-      height: "3px",
-      background: "#b8860b",
-      borderRadius: "999px",
-      marginBottom: "24px",
-    }}
-  />
-
-  {renderAddressForm(address, handleChange)}
-</>
-            
-            <div style={{ textAlign: 'right', marginTop: '1.5rem' }}>
-              <button onClick={() => setShowPopup(false)} disabled={submitting} style={cancelButtonStyle}>Cancel</button>
-              <button onClick={handleSubmit} disabled={submitting} style={{ ...submitButtonStyle, opacity: submitting ? 0.7 : 1, cursor: submitting ? 'not-allowed' : 'pointer' }}>
-                {submitting ? 'Saving...' : 'Submit'}
-              </button>
-            </div>
+            ))}
+          </div>
+          <div style={{ marginTop: '1.5rem', borderTop: '1px solid #ddd', paddingTop: '1rem' }}>
+            <div style={rowStyle}><span>Subtotal</span><span>₹{subtotal}</span></div>
+            <div style={rowStyle}><span>Shipping</span><span>Free</span></div>
+            <div style={{ ...rowStyle, fontWeight: 700, fontSize: '18px' }}><span>Total</span><span>₹{subtotal}</span></div>
+            <button
+              onClick={() => {
+                const selected = savedAddresses.find(a => a._id === selectedAddressId);
+                if (!selected) return toast.error("Please select a shipping address to continue.");
+                localStorage.setItem('selectedShippingAddress', JSON.stringify(selected));
+                if (subtotal <= 0) {
+                  toast.error("Your cart is empty.");
+                  return;
+                }
+                navigate('/payment');
+              }}
+              style={proceedButtonStyle}
+            >
+              Proceed to Payment
+            </button>
           </div>
         </div>
-      )}
+
+        {popupVisible && (
+          <div style={{ ...popupOverlayStyle, opacity: showPopup ? 1 : 0 }} onClick={() => setShowPopup(false)}>
+            <div style={{ ...popupCardStyle, ...popupCardAnimatedStyle(showPopup) }} onClick={(e) => e.stopPropagation()}>
+              <>
+                <h2
+                  style={{
+                    color: "#7b2424",
+                    fontWeight: 700,
+                    marginBottom: "10px",
+                  }}
+                >
+                  {isEditing ? "Edit Address" : "Add New Address"}
+                </h2>
+
+                <div
+                  style={{
+                    width: "60px",
+                    height: "3px",
+                    background: "#b8860b",
+                    borderRadius: "999px",
+                    marginBottom: "24px",
+                  }}
+                />
+
+                {renderAddressForm(address, handleChange)}
+              </>
+
+              <div style={{ textAlign: 'right', marginTop: '1.5rem' }}>
+                <button onClick={() => setShowPopup(false)} disabled={submitting} style={cancelButtonStyle}>Cancel</button>
+                <button onClick={handleSubmit} disabled={submitting} style={{ ...submitButtonStyle, opacity: submitting ? 0.7 : 1, cursor: submitting ? 'not-allowed' : 'pointer' }}>
+                  {submitting ? 'Saving...' : 'Submit'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

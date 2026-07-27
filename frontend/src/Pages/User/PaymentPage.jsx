@@ -56,132 +56,132 @@ const PaymentPage = () => {
 
     try {
       setPlacingOrder(true);
-      const res = await fetch('http://localhost:8080/api/orders', {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/orders`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${userInfo?.token}`,
-        },
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo?.token}`,
+      },
         body: JSON.stringify({ shippingAddress: address, paymentId }),
       });
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.message || 'Failed to place order');
-      }
-
-      const order = await res.json();
-      resetCart(); // backend already deleted the cart items during order creation — just sync local state
-      localStorage.removeItem('selectedShippingAddress');
-      navigate('/order-success', { state: { orderId: order._id } });
-    } catch (err) {
-      console.error(err);
-      toast.error(err.message || 'Something went wrong placing your order. Please contact support.');
-    } finally {
-      setPlacingOrder(false);
-    }
-  };
-
-  // ---- Razorpay flow (unchanged, kept intact for future use) ----
-  const handleRazorpayPayment = async () => {
-    const res = await loadRazorpayScript();
-    if (!res) {
-      toast.error('Failed to load Razorpay script');
-      return;
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.message || 'Failed to place order');
     }
 
-    const options = {
-      key: 'rzp_test_YourKeyHere', // ✅ replace with your Razorpay Test Key
-      amount: amount * 100, // Razorpay needs amount in paise
-      currency: 'INR',
-      name: 'Navkar Jewellers',
-      description: 'Jewellery Order',
-      prefill: {
-        name: `${address.firstName} ${address.lastName}`,
-        email: address.email,
-        contact: address.mobile
-      },
-      notes: {
-        address: `${address.address1}, ${address.city}, ${address.state} - ${address.pincode}`
-      },
-      handler: function (response) {
-        placeOrder(response.razorpay_payment_id);
-      },
-      theme: { color: '#7b2424' }
-    };
+    const order = await res.json();
+    resetCart(); // backend already deleted the cart items during order creation — just sync local state
+    localStorage.removeItem('selectedShippingAddress');
+    navigate('/order-success', { state: { orderId: order._id } });
+  } catch (err) {
+    console.error(err);
+    toast.error(err.message || 'Something went wrong placing your order. Please contact support.');
+  } finally {
+    setPlacingOrder(false);
+  }
+};
 
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+// ---- Razorpay flow (unchanged, kept intact for future use) ----
+const handleRazorpayPayment = async () => {
+  const res = await loadRazorpayScript();
+  if (!res) {
+    toast.error('Failed to load Razorpay script');
+    return;
+  }
+
+  const options = {
+    key: 'rzp_test_YourKeyHere', // ✅ replace with your Razorpay Test Key
+    amount: amount * 100, // Razorpay needs amount in paise
+    currency: 'INR',
+    name: 'Navkar Jewellers',
+    description: 'Jewellery Order',
+    prefill: {
+      name: `${address.firstName} ${address.lastName}`,
+      email: address.email,
+      contact: address.mobile
+    },
+    notes: {
+      address: `${address.address1}, ${address.city}, ${address.state} - ${address.pincode}`
+    },
+    handler: function (response) {
+      placeOrder(response.razorpay_payment_id);
+    },
+    theme: { color: '#7b2424' }
   };
 
-  // ---- COD flow (new) ----
-  const handleCodOrder = () => {
-    placeOrder(null); // no paymentId -> backend marks paymentMethod: 'COD', paymentStatus: 'pending'
-  };
+  const rzp = new window.Razorpay(options);
+  rzp.open();
+};
 
-  const handlePlaceOrder = () => {
-    if (placingOrder) return;
-    if (paymentMethod === 'COD') {
-      handleCodOrder();
-    } else {
-      handleRazorpayPayment();
-    }
-  };
+// ---- COD flow (new) ----
+const handleCodOrder = () => {
+  placeOrder(null); // no paymentId -> backend marks paymentMethod: 'COD', paymentStatus: 'pending'
+};
 
-  return (
-    <div style={pageWrap}>
-      <h2 style={{ color: '#7b2424' }}>Confirm & Pay</h2>
+const handlePlaceOrder = () => {
+  if (placingOrder) return;
+  if (paymentMethod === 'COD') {
+    handleCodOrder();
+  } else {
+    handleRazorpayPayment();
+  }
+};
 
-      {address && (
-        <div style={addressCard}>
-          <h3 style={{ marginTop: 0 }}>Shipping To:</h3>
-          <p>{address.firstName} {address.lastName}</p>
-          <p>{address.address1}, {address.city}, {address.state} - {address.pincode}</p>
-          <p>📞 {address.mobile}</p>
-          <p>📧 {address.email}</p>
-        </div>
-      )}
+return (
+  <div style={pageWrap}>
+    <h2 style={{ color: '#7b2424' }}>Confirm & Pay</h2>
 
-      <h3 style={sectionTitle}>Select Payment Method</h3>
-      <div style={methodRow}>
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={() => setPaymentMethod('COD')}
-          style={{ ...methodCard, ...(paymentMethod === 'COD' ? methodCardActive : {}) }}
-        >
-          <div style={methodIcon}>💵</div>
-          <div>
-            <div style={methodTitle}>Cash on Delivery</div>
-            <div style={methodDesc}>Pay in cash when your order arrives</div>
-          </div>
-        </div>
+    {address && (
+      <div style={addressCard}>
+        <h3 style={{ marginTop: 0 }}>Shipping To:</h3>
+        <p>{address.firstName} {address.lastName}</p>
+        <p>{address.address1}, {address.city}, {address.state} - {address.pincode}</p>
+        <p>📞 {address.mobile}</p>
+        <p>📧 {address.email}</p>
+      </div>
+    )}
 
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={() => setPaymentMethod('Razorpay')}
-          style={{ ...methodCard, ...(paymentMethod === 'Razorpay' ? methodCardActive : {}) }}
-        >
-          <div style={methodIcon}>💳</div>
-          <div>
-            <div style={methodTitle}>Pay Online</div>
-            <div style={methodDesc}>UPI, Cards & Netbanking via Razorpay</div>
-          </div>
+    <h3 style={sectionTitle}>Select Payment Method</h3>
+    <div style={methodRow}>
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => setPaymentMethod('COD')}
+        style={{ ...methodCard, ...(paymentMethod === 'COD' ? methodCardActive : {}) }}
+      >
+        <div style={methodIcon}>💵</div>
+        <div>
+          <div style={methodTitle}>Cash on Delivery</div>
+          <div style={methodDesc}>Pay in cash when your order arrives</div>
         </div>
       </div>
 
-      <h3 style={{ marginTop: '1.5rem' }}>Total: ₹{amount.toLocaleString('en-IN')}</h3>
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => setPaymentMethod('Razorpay')}
+        style={{ ...methodCard, ...(paymentMethod === 'Razorpay' ? methodCardActive : {}) }}
+      >
+        <div style={methodIcon}>💳</div>
+        <div>
+          <div style={methodTitle}>Pay Online</div>
+          <div style={methodDesc}>UPI, Cards & Netbanking via Razorpay</div>
+        </div>
+      </div>
+    </div>
 
-      <button onClick={handlePlaceOrder} style={payNowBtn} disabled={placingOrder || !address}>
-        {placingOrder
-          ? 'Placing order...'
-          : paymentMethod === 'COD'
+    <h3 style={{ marginTop: '1.5rem' }}>Total: ₹{amount.toLocaleString('en-IN')}</h3>
+
+    <button onClick={handlePlaceOrder} style={payNowBtn} disabled={placingOrder || !address}>
+      {placingOrder
+        ? 'Placing order...'
+        : paymentMethod === 'COD'
           ? 'Place Order (Cash on Delivery)'
           : 'Pay Now'}
-      </button>
-    </div>
-  );
+    </button>
+  </div>
+);
 };
 
 const pageWrap = {

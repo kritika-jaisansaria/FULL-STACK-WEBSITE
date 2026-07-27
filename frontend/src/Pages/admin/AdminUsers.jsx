@@ -17,7 +17,7 @@ const AdminUsers = () => {
       const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
       const res = await fetch(
-        `http://localhost:8080/api/users?q=${search}&role=${roleFilter}`,
+        `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/users?q=${search}&role=${roleFilter}`,
         {
           headers: {
             Authorization: `Bearer ${userInfo?.token}`,
@@ -52,7 +52,7 @@ const AdminUsers = () => {
     try {
       const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-      await fetch(`http://localhost:8080/api/users/${id}`, {
+      await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/users/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${userInfo?.token}`,

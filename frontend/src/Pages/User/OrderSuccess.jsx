@@ -6,9 +6,9 @@ const OrderSuccess = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const existingOrder = location.state?.order;
-const orderId = location.state?.orderId || existingOrder?._id;
-console.log(JSON.stringify(location.state, null, 2));
-console.log(orderId);
+  const orderId = location.state?.orderId || existingOrder?._id;
+  console.log(JSON.stringify(location.state, null, 2));
+  console.log(orderId);
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +21,7 @@ console.log(orderId);
     const fetchOrder = async () => {
       const userInfo = JSON.parse(localStorage.getItem('userInfo'));
       try {
-        const res = await fetch(`http://localhost:8080/api/orders/mine/${orderId}`, {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/orders/mine/${orderId}`, {
           headers: { Authorization: `Bearer ${userInfo?.token}` },
         });
         if (!res.ok) throw new Error('Failed to fetch order');
@@ -34,11 +34,11 @@ console.log(orderId);
         setLoading(false);
       }
     };
-if (existingOrder) {
-  setOrder(existingOrder);
-  setLoading(false);
-  return;
-}
+    if (existingOrder) {
+      setOrder(existingOrder);
+      setLoading(false);
+      return;
+    }
     fetchOrder();
   }, [orderId, existingOrder]);
 
@@ -70,15 +70,15 @@ if (existingOrder) {
         Thank you for shopping with us. We've received your order and it's being processed.
       </p>
       <p
-  style={{
-    color: "#777",
-    marginTop: "-8px",
-    marginBottom: "24px",
-    maxWidth: "500px",
-  }}
->
-  We've sent your order confirmation and our team will start processing your order shortly.
-</p>
+        style={{
+          color: "#777",
+          marginTop: "-8px",
+          marginBottom: "24px",
+          maxWidth: "500px",
+        }}
+      >
+        We've sent your order confirmation and our team will start processing your order shortly.
+      </p>
 
       {loading ? (
         <div style={detailsCard}>
@@ -99,21 +99,21 @@ if (existingOrder) {
             <span style={detailValue}>{order.paymentMethod === 'COD' ? 'Cash on Delivery' : order.paymentMethod}</span>
           </div>
           <div style={detailRow}>
-  <span style={detailLabel}>Payment Status</span>
+            <span style={detailLabel}>Payment Status</span>
 
-  <span
-    style={{
-      ...detailValue,
-      color:
-        order.paymentStatus === "paid"
-          ? "#2e7d32"
-          : "#b8860b",
-    }}
-  >
-    {order.paymentStatus.charAt(0).toUpperCase() +
-      order.paymentStatus.slice(1)}
-  </span>
-</div>
+            <span
+              style={{
+                ...detailValue,
+                color:
+                  order.paymentStatus === "paid"
+                    ? "#2e7d32"
+                    : "#b8860b",
+              }}
+            >
+              {order.paymentStatus.charAt(0).toUpperCase() +
+                order.paymentStatus.slice(1)}
+            </span>
+          </div>
           {order.estimatedDelivery && (
             <div style={detailRow}>
               <span style={detailLabel}>Estimated Delivery</span>

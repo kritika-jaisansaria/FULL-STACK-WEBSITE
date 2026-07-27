@@ -32,11 +32,11 @@ const AllJewellery = () => {
     CATEGORY_SLUG_MAP[slug] ||
     (category
       ? {
-          type: "category",
-          value: category.toLowerCase(),
-          label:
-            category.charAt(0).toUpperCase() + category.slice(1),
-        }
+        type: "category",
+        value: category.toLowerCase(),
+        label:
+          category.charAt(0).toUpperCase() + category.slice(1),
+      }
       : null);
 
   // ---- Effect 1: build query params from route + query string, fetch products ----
@@ -85,7 +85,7 @@ const AllJewellery = () => {
       params.set("maxPrice", maxPrice);
     }
 
-    fetch(`http://localhost:8080/api/products?${params.toString()}`)
+    fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/products?${params.toString()}`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);

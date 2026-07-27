@@ -35,7 +35,7 @@ cd frontend && npm install && cd ..
 
 ### Run the application
 ```bash
-# Start backend (http://localhost:8080)
+# Start backend (${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'})
 npm start
 
 # In a separate terminal, start the frontend (http://localhost:5173)

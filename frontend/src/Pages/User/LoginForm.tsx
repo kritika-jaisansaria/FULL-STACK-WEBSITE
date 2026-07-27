@@ -2,17 +2,17 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const API = 'http://localhost:8080/api/auth';
+const API = `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/auth`;
 
-// ---------- Theme (matches site's gold / maroon jewellery theme) ----------
-const colors = {
-  maroon: '#3e0f0f',
-  gold: '#b8860b',
-  goldLight: '#f5f5f5',
-  gray: '#494F55',
-  border: '#ddd',
-  danger: '#c0392b',
-};
+  // ---------- Theme (matches site's gold / maroon jewellery theme) ----------
+  const colors = {
+    maroon: '#3e0f0f',
+    gold: '#b8860b',
+    goldLight: '#f5f5f5',
+    gray: '#494F55',
+    border: '#ddd',
+    danger: '#c0392b',
+  };
 
 type View = 'login' | 'signup' | 'signup-otp' | 'login-otp' | 'forgot' | 'reset';
 

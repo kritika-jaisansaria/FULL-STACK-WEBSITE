@@ -12,35 +12,35 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-  fetch(`http://localhost:8080/api/products/${id}`)
-    .then(res => {
-      if (!res.ok) {
-        throw new Error('Product not found');
-      }
-      return res.json();
-    })
-    .then(data => setProduct(data))
-    .catch(err => {
-      console.error(err);
-      setProduct(null); // optional
-    });
-}, [id]);
+    fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/products/${id}`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Product not found');
+        }
+        return res.json();
+      })
+      .then(data => setProduct(data))
+      .catch(err => {
+        console.error(err);
+        setProduct(null); // optional
+      });
+  }, [id]);
 
 
   if (!product) return <p style={{ textAlign: 'center' }}>Loading...</p>;
 
   return (
     <div style={{ padding: '40px 20px', maxWidth: '1000px', margin: 'auto' }}>
-      <ProductHeader _id={product._id}  name={product.name} price={product.price}  media={product.media} />
+      <ProductHeader _id={product._id} name={product.name} price={product.price} media={product.media} />
       <ProductImageGallery media={product.media} />
       <DeliveryDetailsForm product={product} />
       <Recommendations />
-      <CustomerReviews/>
-      <WhyTanishq/>
-         <FixedBottomBar product={product} />
+      <CustomerReviews />
+      <WhyTanishq />
+      <FixedBottomBar product={product} />
 
     </div>
-    
+
   );
 };
 

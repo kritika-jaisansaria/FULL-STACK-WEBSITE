@@ -11,7 +11,7 @@ const AdminDashboard = () => {
         const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
         const res = await fetch(
-          "http://localhost:8080/api/admin/dashboard",
+          "${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/admin/dashboard",
           {
             headers: {
               Authorization: `Bearer ${userInfo?.token}`,
@@ -139,8 +139,8 @@ const StatusBadge = ({ status }) => (
         status === "delivered"
           ? "#2e7d32"
           : status === "pending"
-          ? "#f39c12"
-          : "#1976d2",
+            ? "#f39c12"
+            : "#1976d2",
     }}
   >
     {status}

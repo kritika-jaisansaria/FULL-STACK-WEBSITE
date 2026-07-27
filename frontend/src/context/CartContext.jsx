@@ -6,7 +6,7 @@ const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
-const API = "http://localhost:8080";
+const API = `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}`;
 
 // Returns the latest logged-in user every time.
 // This avoids stale localStorage values after login/logout.
@@ -206,9 +206,9 @@ export const CartProvider = ({ children }) => {
   };
 
   const resetCart = () => {
-  setCartItems([]);
-  setInitialLoad(false);
-};
+    setCartItems([]);
+    setInitialLoad(false);
+  };
 
   return (
     <CartContext.Provider

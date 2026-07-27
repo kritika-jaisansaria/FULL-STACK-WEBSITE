@@ -57,7 +57,7 @@ const Header = () => {
       </div>
 
       {/* Logo */}
-      <img src={logo} alt="logo" style={{ height: 50 }} />
+      <img src={logo} alt="logo" style={{ height: 50, cursor: 'pointer' }} onClick={() => navigate('/')} />
 
       {/* Icons */}
       <div style={{ display: 'flex', gap: 30, fontSize: 20, position: 'relative' }}>

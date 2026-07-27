@@ -17,7 +17,7 @@ export default function DeliveryDetailsForm() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/api/products/${id}`);
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/products/${id}`);
         setProduct(res.data);
       } catch (err) {
         console.error("Failed to fetch product:", err);

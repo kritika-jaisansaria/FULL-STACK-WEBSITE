@@ -3,9 +3,9 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const API_BASE = 'http://localhost:8080/api/orders';
+const API_BASE = `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/orders`;
 
-const STATUS_OPTIONS = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
+  const STATUS_OPTIONS = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
 
 const STATUS_COLORS = {
   pending: '#b8860b',

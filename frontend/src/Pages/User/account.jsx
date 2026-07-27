@@ -32,118 +32,118 @@ const Account = () => {
 
   const fetchOrders = async (token) => {
     try {
-      const res = await fetch('http://localhost:8080/api/orders/mine', {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/api/orders/mine`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) throw new Error('Failed to fetch orders');
-      const data = await res.json();
-      setOrders(data);
-    } catch (err) {
-      console.error(err);
-      toast.error('Could not load your orders');
-    } finally {
-      setLoading(false);
-    }
-  };
+    if (!res.ok) throw new Error('Failed to fetch orders');
+    const data = await res.json();
+    setOrders(data);
+  } catch (err) {
+    console.error(err);
+    toast.error('Could not load your orders');
+  } finally {
+    setLoading(false);
+  }
+};
 
-  const handleLogout = () => {
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('token');
-    navigate('/');
-  };
+const handleLogout = () => {
+  localStorage.removeItem('userInfo');
+  localStorage.removeItem('token');
+  navigate('/');
+};
 
-  if (!user) return null;
+if (!user) return null;
 
-  return (
-    <div style={pageContainer}>
-      <div style={headerRow}>
-        <h1 style={heading}>My Account</h1>
-        <button onClick={handleLogout} style={logoutBtn}>Logout</button>
-      </div>
-
-      <div style={sectionCard}>
-        <h2 style={sectionHeading}>Personal Information</h2>
-        <p><strong>Name:</strong> {user.name}</p>
-        <p><strong>Email:</strong> {user.email}</p>
-      </div>
-
-      <div style={sectionCard}>
-        <h2 style={sectionHeading}>My Orders</h2>
-
-        {loading ? (
-          <p style={mutedText}>Loading your orders...</p>
-        ) : orders.length === 0 ? (
-          <p style={mutedText}>You haven't placed any orders yet.</p>
-        ) : (
-          <div style={ordersList}>
-            {orders.map(order => (
-              <div key={order._id} style={orderCard}>
-                <div style={orderCardHeader}>
-                  <div>
-                    <div>
-  <p style={orderIdText}>
-    Order {order.orderNumber || `#${order._id.slice(-8).toUpperCase()}`}
-  </p>
-
-  <p style={orderDateText}>
-    {new Date(order.createdAt).toLocaleDateString('en-IN', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    })}
-  </p>
-
-  <p style={orderDateText}>
-    Payment: {order.paymentMethod}
-  </p>
-
-  {order.estimatedDelivery && (
-    <p style={orderDateText}>
-      Delivery by{" "}
-      {new Date(order.estimatedDelivery).toLocaleDateString("en-IN")}
-    </p>
-  )}
-</div>
-                  </div>
-                  <span style={{ ...statusBadge, backgroundColor: STATUS_COLORS[order.orderStatus] || '#999' }}>
-                    {order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}
-                  </span>
-                </div>
-
-                <div style={itemsList}>
-                  {order.items.map((item, i) => (
-                    <div key={i} style={itemRow}>
-                      <span>{item.name} × {item.quantity}</span>
-                      <span>₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div style={orderFooter}>
-                  <div
-  style={{
-    display: "flex",
-    justifyContent: "flex-end",
-    marginTop: "12px",
-  }}
->
-  <button
-    style={viewBtn}
-    onClick={() => navigate(`/orders/${order._id}`)}
-  >
-    View Details
-  </button>
-</div>
-                  <span>Total</span>
-                  <span style={{ fontWeight: 700 }}>₹{(order.finalAmount ?? order.totalAmount).toLocaleString('en-IN')}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+return (
+  <div style={pageContainer}>
+    <div style={headerRow}>
+      <h1 style={heading}>My Account</h1>
+      <button onClick={handleLogout} style={logoutBtn}>Logout</button>
     </div>
-  );
+
+    <div style={sectionCard}>
+      <h2 style={sectionHeading}>Personal Information</h2>
+      <p><strong>Name:</strong> {user.name}</p>
+      <p><strong>Email:</strong> {user.email}</p>
+    </div>
+
+    <div style={sectionCard}>
+      <h2 style={sectionHeading}>My Orders</h2>
+
+      {loading ? (
+        <p style={mutedText}>Loading your orders...</p>
+      ) : orders.length === 0 ? (
+        <p style={mutedText}>You haven't placed any orders yet.</p>
+      ) : (
+        <div style={ordersList}>
+          {orders.map(order => (
+            <div key={order._id} style={orderCard}>
+              <div style={orderCardHeader}>
+                <div>
+                  <div>
+                    <p style={orderIdText}>
+                      Order {order.orderNumber || `#${order._id.slice(-8).toUpperCase()}`}
+                    </p>
+
+                    <p style={orderDateText}>
+                      {new Date(order.createdAt).toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                      })}
+                    </p>
+
+                    <p style={orderDateText}>
+                      Payment: {order.paymentMethod}
+                    </p>
+
+                    {order.estimatedDelivery && (
+                      <p style={orderDateText}>
+                        Delivery by{" "}
+                        {new Date(order.estimatedDelivery).toLocaleDateString("en-IN")}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <span style={{ ...statusBadge, backgroundColor: STATUS_COLORS[order.orderStatus] || '#999' }}>
+                  {order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}
+                </span>
+              </div>
+
+              <div style={itemsList}>
+                {order.items.map((item, i) => (
+                  <div key={i} style={itemRow}>
+                    <span>{item.name} × {item.quantity}</span>
+                    <span>₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div style={orderFooter}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginTop: "12px",
+                  }}
+                >
+                  <button
+                    style={viewBtn}
+                    onClick={() => navigate(`/orders/${order._id}`)}
+                  >
+                    View Details
+                  </button>
+                </div>
+                <span>Total</span>
+                <span style={{ fontWeight: 700 }}>₹{(order.finalAmount ?? order.totalAmount).toLocaleString('en-IN')}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+);
 };
 
 const pageContainer = {
