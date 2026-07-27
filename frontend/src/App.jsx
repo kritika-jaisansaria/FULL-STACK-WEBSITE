@@ -28,11 +28,11 @@ import { CATEGORY_SLUG_MAP } from './utils/categoryRoutes';
 
 
 // Admin Pages
-import AdminHome from './Pages/admin/adminHome';
+import AdminHome from './Pages/admin/AdminHome';
 import AdminDashboard from "./Pages/admin/AdminDashboard";
 import AdminUsers from "./Pages/admin/AdminUsers";
 import AdminProducts from './Pages/admin/AdminProducts';
-import AdminOrders from "./Pages/admin/adminOrders";
+import AdminOrders from "./Pages/admin/AdminOrders";
 
 /* ================= ROUTES WITH MODAL SUPPORT ================= */
 
