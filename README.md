@@ -68,10 +68,6 @@ FULL-STACK-WEBSITE/
 └─ README.md              # Project documentation
 ```
 
-## 📝 Notes on Recent Fixes
-- **Gross weight**: Fixed case mismatch (`grossWeight` vs `GrossWeight`) and now shows the value with a "g" unit.
-- **Logo navigation**: Logo is now clickable and redirects to `/` (home).
-- **Metal details**: Empty fields are filtered out, field names are formatted (e.g., `grossWeight` → **Gross Weight**), and the MongoDB `_id` is hidden.
 
 ## 🙏 Contributing
 Feel free to open issues or submit pull requests. Follow the existing code style and run linting before committing.
