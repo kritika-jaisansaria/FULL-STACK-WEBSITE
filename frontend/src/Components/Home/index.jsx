@@ -26,18 +26,18 @@ const Header = () => {
     setUser(storedUser);
   }, []);
 
- const handleLogout = () => {
-  localStorage.removeItem("userInfo");
-  localStorage.removeItem("token");
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("token");
 
-  resetCart();
-  clearWishlist();
+    resetCart();
+    clearWishlist();
 
-  setUser(null);
-  setShowDropdown(false);
+    setUser(null);
+    setShowDropdown(false);
 
-  navigate("/");
-};
+    navigate("/");
+  };
 
   return (
     <div

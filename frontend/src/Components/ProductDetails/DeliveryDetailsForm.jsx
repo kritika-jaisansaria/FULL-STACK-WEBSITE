@@ -81,7 +81,7 @@ export default function DeliveryDetailsForm() {
         <span style={{ fontSize: '20px' }}>•</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Weight size={18} color="#f59e0b" />
-          <span>{metalDetails.GrossWeight || '—'}</span>
+          <span>{metalDetails.grossWeight || '—'}</span>
         </div>
       </div>
 
@@ -157,7 +157,7 @@ export default function DeliveryDetailsForm() {
         alignItems: 'flex-start',
         gap: '40px',
         marginTop: '50px',
-        width:'100%'
+        width: '100%'
       }}>
         {/* Accordion Left */}
         <div style={{
@@ -210,24 +210,29 @@ export default function DeliveryDetailsForm() {
                       rowGap: '20px',
                       columnGap: '24px'
                     }}>
-                      {Object.entries(item.content).map(([key, value]) => (
-                        <div key={key}>
-                          <div style={{
-                            fontWeight: '600',
-                            fontSize: '18px',
-                            marginBottom: '6px',
-                            color: '#111827'
-                          }}>
-                            {value}
-                          </div>
-                          <div style={{
-                            fontSize: '13px',
-                            color: '#9ca3af'
-                          }}>
-                            {key}
-                          </div>
-                        </div>
-                      ))}
+                      {Object.entries(item.content)
+                        .filter(([k, v]) => k !== '_id' && v && v !== '')
+                        .map(([key, value]) => {
+                          const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                          return (
+                            <div key={key}>
+                              <div style={{
+                                fontWeight: '600',
+                                fontSize: '18px',
+                                marginBottom: '6px',
+                                color: '#111827'
+                              }}>
+                                {value}
+                              </div>
+                              <div style={{
+                                fontSize: '13px',
+                                color: '#9ca3af'
+                              }}>
+                                {formattedKey}
+                              </div>
+                            </div>
+                          );
+                        })}
                     </div>
                   )}
                 </div>
