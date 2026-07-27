@@ -1,4 +1,7 @@
-# Logs
+# Ignore environment configuration
+.env
+
+# Logs and build artifacts
 logs
 *.log
 npm-debug.log*
@@ -7,13 +10,12 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Node modules and distribution folders
 node_modules
 dist
 dist-ssr
-*.local
-.env
 
-# Editor directories and files
+# Editor files
 .vscode/*
 !.vscode/extensions.json
 .idea
